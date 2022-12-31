@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TimelineComponent } from './pages/timeline/timeline.component';
-import { InitializationComponent } from './initialization/initialization.component';
+import { InitializationComponent } from './pages/initialization/initialization.component';
 
 @NgModule({
   declarations: [
