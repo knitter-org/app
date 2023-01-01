@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TimelineComponent } from './timeline.component';
+import { ChannelsViewComponent } from './channels-view.component';
 
-describe('TimelineComponent', () => {
-  let component: TimelineComponent;
-  let fixture: ComponentFixture<TimelineComponent>;
+describe('ChannelsViewComponent', () => {
+  let component: ChannelsViewComponent;
+  let fixture: ComponentFixture<ChannelsViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TimelineComponent ]
+      declarations: [ ChannelsViewComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TimelineComponent);
+    fixture = TestBed.createComponent(ChannelsViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
