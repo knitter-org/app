@@ -11,6 +11,11 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { ChannelsViewComponent } from './pages/channels-view/channels-view.component';
 import { FeedsEditComponent } from './pages/feeds-edit/feeds-edit.component';
 import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-columns-layout.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
+import { FeedReaderService } from './feed-reader.service';
+import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
+import { EntryFormatListItemComponent } from './elements/entry-format-list-item/entry-format-list-item.component';
 
 @NgModule({
   declarations: [
@@ -20,15 +25,19 @@ import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-colu
     SettingsComponent,
     ChannelsViewComponent,
     FeedsEditComponent,
-    TwoColumnsLayoutComponent
+    TwoColumnsLayoutComponent,
+    FeedsAddComponent,
+    FeedsViewComponent,
+    EntryFormatListItemComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ReactiveFormsModule,
     NgbModule,
     FontAwesomeModule
   ],
-  providers: [],
+  providers: [FeedReaderService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

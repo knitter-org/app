@@ -1,0 +1,30 @@
+<h3>Add Feed</h3>
+
+<form [formGroup]="form">
+  <div class="form-floating mb-3">
+    <input
+      formControlName="url"
+      [class.is-invalid]="form.errors"
+      id="url"
+      type="text"
+      placeholder="https://example.com/rss"
+      class="form-control is-invalid"
+    />
+    <label for="url">Feed URL</label>
+    <div *ngIf="form.errors?.['invalidFeed']" class="invalid-feedback">
+      No valid feed found. Please try a different URL pointing to a RSS or ATOM
+      feed.
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button
+      type="button"
+      [disabled]="!form.valid"
+      (click)="addFeed()"
+      class="btn btn-primary"
+    >
+      Add
+    </button>
+  </div>
+</form>

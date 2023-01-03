@@ -20,21 +20,14 @@ export class FeedReaderService {
   ) {}
 
   async fetchFeed(url: string): Promise<FeedFetchResult> {
-    let result;
-    try {
-      result = await read(url, undefined, { headers: [] });
-    } catch (e) {
-      result = await read('https://api.allorigins.win/get?url='+url, undefined, { headers: [] });
-    }
+    this.http.get(url, { responseType: 'text' }).subscribe(a => console.log(a));
 
     const entries = result.entries!.map(entry => ({
       title: entry.title!,
       text: entry.description!,
-      publishedAt: entry.published!,
+      publishedAt: new Date(entry.published!),
       url: entry.link!,
     }));
-
-    console.log(entries);
 
     return {
       title: result.title || url,

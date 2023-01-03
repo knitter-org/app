@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Doc } from './database.models';
 
 (window as any).global = window;
 // import * as PouchDB from 'pouchdb';
@@ -13,5 +14,9 @@ export class DatabaseService {
 
   constructor() {
     this.db = new PouchDB('knitter');
+  }
+
+  async put(doc: Doc) {
+    return this.db.put(doc);
   }
 }

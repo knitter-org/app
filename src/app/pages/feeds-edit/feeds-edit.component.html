@@ -1,1 +1,10 @@
-<p>feeds-edit works!</p>
+<h3>Edit Feed</h3>
+
+<form [formGroup]="form">
+
+  <div class="form-floating mb-3">
+    <input id="url" type="text" formControlName="url" placeholder="https://example.com/rss" class="form-control">
+    <label for="url">Feed URL</label>
+  </div>
+
+</form>

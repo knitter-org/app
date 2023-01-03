@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
+    "@extractus/feed-extractor": "^6.1.8",
     "@fortawesome/angular-fontawesome": "^0.12.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.2.0",
@@ -28,8 +29,8 @@
     "@ng-bootstrap/ng-bootstrap": "^14.0.0",
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
+    "karma-firefox-launcher": "^2.1.2",
     "pouchdb": "^8.0.0",
-    "rss-parser": "^3.12.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
