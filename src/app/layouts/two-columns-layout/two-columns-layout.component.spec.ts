@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
 
 import { TwoColumnsLayoutComponent } from './two-columns-layout.component';
 
@@ -8,6 +9,7 @@ describe('TwoColumnsLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [RouterModule],
       declarations: [ TwoColumnsLayoutComponent ]
     })
     .compileComponents();
