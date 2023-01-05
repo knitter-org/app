@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { defer } from 'rxjs';
 import { FeedDoc } from './database.models';
 import { DatabaseService } from './database.service';
 import { EntryService } from './entry.service';
@@ -18,6 +19,7 @@ export class FeedService {
   ) { }
 
   async addFeed(url: string): Promise<string> {
+    const fetchedAt = new Date();
     const fetchResult = await this.feedReaderService.fetchFeed(url);
     const feedId = this.generateFeedId(url);
 
@@ -26,13 +28,26 @@ export class FeedService {
       type: 'feed',
       title: fetchResult.title,
       url: url,
-      fetch: { lastSuccessfulAt: new Date() },
+      fetch: { lastSuccessfulAt: fetchedAt },
     };
 
     await this.databaseService.put(feedDoc);
     await this.entryService.addEntries(fetchResult.entries, feedDoc);
 
     return feedId;
+  }
+
+  async fetchEntries(feedId: string) {
+    const feed = await this.getFeed(feedId);
+    const fetchedAt = new Date();
+    const fetchResult = await this.feedReaderService.fetchFeed(feed.url);
+
+    const newEntries = fetchResult.entries.filter(entry => entry.publishedAt > feed.fetch.lastSuccessfulAt);
+    await this.entryService.addEntries(newEntries, feed);
+    console.log(`Fetch finished for ${feed._id} (${feed.title}): ${newEntries.length} new entries since ${feed.fetch.lastSuccessfulAt}`);
+
+    feed.fetch.lastSuccessfulAt = fetchedAt;
+    await this.databaseService.put(feed);
   }
 
   async getFeeds(): Promise<FeedDoc[]> {

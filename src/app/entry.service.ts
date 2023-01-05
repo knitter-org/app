@@ -28,8 +28,7 @@ export class EntryService {
       return entryDoc;
     });
 
-    const r = await this.databaseService.db.bulkDocs(docs);
-    console.log('entries:', r);
+    await this.databaseService.db.bulkDocs(docs);
   }
 
   async entriesForFeed(feedId: string): Promise<EntryDoc[]> {
@@ -41,7 +40,7 @@ export class EntryService {
     });
     return result.rows.map((row: any) => row.doc);
   }
-  
+
   generateEntryId(feedDoc: FeedDoc, publishedAt: Date, url: string): string {
     const feedPart = feedDoc._id.substring(feedDoc._id.indexOf(':'));
     const datePart = publishedAt.toISOString().substring(0, 19);

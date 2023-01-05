@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { of } from 'rxjs';
 
 import { FeedsEditComponent } from './feeds-edit.component';
 
@@ -8,7 +11,16 @@ describe('FeedsEditComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FeedsEditComponent ]
+      imports: [RouterModule, ReactiveFormsModule],
+      declarations: [ FeedsEditComponent ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({id: 123})
+          }
+        }
+      ]
     })
     .compileComponents();
 

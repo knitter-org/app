@@ -16,11 +16,8 @@ export interface FeedFetchResult {
 })
 export class FeedReaderService {
 
-  constructor(
-  ) {}
-
   async fetchFeed(url: string): Promise<FeedFetchResult> {
-    this.http.get(url, { responseType: 'text' }).subscribe(a => console.log(a));
+    const result = await read(url, undefined, { headers: [] });
 
     const entries = result.entries!.map(entry => ({
       title: entry.title!,

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, mergeMap, Observable } from 'rxjs';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
 import { EntryDoc, FeedDoc } from 'src/app/database.models';
 import { EntryService } from 'src/app/entry.service';
 import { FeedService } from 'src/app/feed.service';
@@ -11,7 +12,9 @@ import { FeedService } from 'src/app/feed.service';
   styleUrls: ['./feeds-view.component.less']
 })
 export class FeedsViewComponent {
-  
+  fetchIcon = faArrowsRotate;
+
+  feedId$ = new BehaviorSubject<string|undefined>(undefined);
   feed$: Observable<FeedDoc>;
   entries$: Observable<EntryDoc[]>;
 
@@ -20,8 +23,12 @@ export class FeedsViewComponent {
     private feedService: FeedService,
     private entryService: EntryService
   ) {
-    const feedId$ = route.params.pipe(map(params => params['id']));
-    this.feed$ = feedId$.pipe(mergeMap(feedId => this.feedService.getFeed(feedId)));
-    this.entries$ = feedId$.pipe(mergeMap(feedId => this.entryService.entriesForFeed(feedId)));
+    route.params.pipe(map(params => params['id'])).subscribe(this.feedId$);
+    this.feed$ = this.feedId$.pipe(mergeMap(feedId => this.feedService.getFeed(feedId!)));
+    this.entries$ = this.feedId$.pipe(mergeMap(feedId => this.entryService.entriesForFeed(feedId!)));
+  }
+
+  async forceFetch() {
+    await this.feedService.fetchEntries(this.feedId$.value!);
   }
 }

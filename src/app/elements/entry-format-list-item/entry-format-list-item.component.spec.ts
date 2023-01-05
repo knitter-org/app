@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FeedService } from 'src/app/feed.service';
 
 import { EntryFormatListItemComponent } from './entry-format-list-item.component';
 
@@ -14,6 +15,14 @@ describe('EntryFormatListItemComponent', () => {
 
     fixture = TestBed.createComponent(EntryFormatListItemComponent);
     component = fixture.componentInstance;
+    component.entry = {
+      _id: FeedService.ID_PREFIX+'testfoo',
+      type: 'entry',
+      title: 'Test',
+      text: 'Test text',
+      url: 'https://example.com',
+      publishedAt: new Date(),
+    };
     fixture.detectChanges();
   });
 

@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { of } from 'rxjs';
 
 import { FeedsViewComponent } from './feeds-view.component';
 
@@ -8,7 +11,16 @@ describe('FeedsViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FeedsViewComponent ]
+      imports: [RouterModule, FontAwesomeModule],
+      declarations: [ FeedsViewComponent ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({id: 123})
+          }
+        }
+      ]
     })
     .compileComponents();
 

@@ -16,6 +16,6 @@ export class FeedsEditComponent {
   constructor(
     route: ActivatedRoute
   ) {
-    const feedId = route.snapshot.params['id'];
+    // const feedId = route.params.ma['id'];
   }
 }

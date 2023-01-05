@@ -1,5 +1,9 @@
 <h3>{{ (feed$ | async)?.title }}</h3>
 
+<button (click)="forceFetch()" type="button" class="btn btn-secondary">
+  <fa-icon [icon]="fetchIcon"></fa-icon>
+</button>
+
 <ul class="list-group">
   <li *ngFor="let entry of entries$ | async" class="list-group-item">
     <app-entry-format-list-item [entry]="entry"></app-entry-format-list-item>
