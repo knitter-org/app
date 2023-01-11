@@ -4,8 +4,4 @@
   <fa-icon [icon]="fetchIcon"></fa-icon>
 </button>
 
-<ul class="list-group">
-  <li *ngFor="let entry of entries$ | async" class="list-group-item">
-    <app-entry-format-list-item [entry]="entry"></app-entry-format-list-item>
-  </li>
-</ul>
+<app-entry-list [entries$]="entries$"></app-entry-list>

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
+import { EntryListComponent } from 'src/app/elements/entry-list/entry-list.component';
 
 import { ChannelsViewComponent } from './channels-view.component';
 
@@ -11,7 +12,7 @@ describe('ChannelsViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterModule],
-      declarations: [ ChannelsViewComponent ],
+      declarations: [ ChannelsViewComponent, EntryListComponent ],
       providers: [
         {
           provide: ActivatedRoute,

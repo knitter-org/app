@@ -31,10 +31,14 @@ export class FeedService {
       fetch: { lastSuccessfulAt: fetchedAt },
     };
 
-    await this.databaseService.put(feedDoc);
+    await this.saveFeed(feedDoc);
     await this.entryService.addEntries(fetchResult.entries, feedDoc);
 
     return feedId;
+  }
+
+  async saveFeed(feedDoc: FeedDoc): Promise<void> {
+    return this.databaseService.put(feedDoc);
   }
 
   async fetchEntries(feedId: string) {
@@ -43,8 +47,12 @@ export class FeedService {
     const fetchResult = await this.feedReaderService.fetchFeed(feed.url);
 
     const newEntries = fetchResult.entries.filter(entry => entry.publishedAt > feed.fetch.lastSuccessfulAt);
-    await this.entryService.addEntries(newEntries, feed);
-    console.log(`Fetch finished for ${feed._id} (${feed.title}): ${newEntries.length} new entries since ${feed.fetch.lastSuccessfulAt}`);
+    if (newEntries.length > 0) {
+      await this.entryService.addEntries(newEntries, feed);
+      console.log(`Fetch finished for ${feed._id} (${feed.title}): ${newEntries.length} new entries since ${feed.fetch.lastSuccessfulAt}`);
+    } else {
+      console.log(`Fetch finished for ${feed._id} (${feed.title}): No updates since ${feed.fetch.lastSuccessfulAt}`);
+    }
 
     feed.fetch.lastSuccessfulAt = fetchedAt;
     await this.databaseService.put(feed);
@@ -60,7 +68,9 @@ export class FeedService {
   }
 
   async getFeed(feedId: string): Promise<FeedDoc> {
-    return this.databaseService.db.get(feedId);
+    const feed = await this.databaseService.db.get(feedId);
+    feed.fetch.lastSuccessfulAt = new Date(feed.fetch.lastSuccessfulAt);
+    return feed;
   }
 
   generateFeedId(url: string): string {

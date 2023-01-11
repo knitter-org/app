@@ -16,6 +16,7 @@ import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
 import { FeedReaderService } from './feed-reader.service';
 import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
 import { EntryFormatListItemComponent } from './elements/entry-format-list-item/entry-format-list-item.component';
+import { EntryListComponent } from './elements/entry-list/entry-list.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { EntryFormatListItemComponent } from './elements/entry-format-list-item/
     TwoColumnsLayoutComponent,
     FeedsAddComponent,
     FeedsViewComponent,
-    EntryFormatListItemComponent
+    EntryFormatListItemComponent,
+    EntryListComponent
   ],
   imports: [
     BrowserModule,

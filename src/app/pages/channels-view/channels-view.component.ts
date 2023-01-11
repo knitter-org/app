@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, Observable } from 'rxjs';
-import { EntryService } from 'src/app/entry.service';
+import { map, Observable, switchMap } from 'rxjs';
+import { ChannelService } from 'src/app/channel.service';
+import { EntryDoc } from 'src/app/database.models';
 
 @Component({
   selector: 'app-channels-view',
@@ -12,16 +13,16 @@ export class ChannelsViewComponent implements OnInit {
 
   channelId$: Observable<string>;
 
+  entries$: Observable<EntryDoc[]>;
+
   constructor(
     private route: ActivatedRoute,
-    private entryService: EntryService
+    private channelService: ChannelService
   ) {
     this.channelId$ = this.route.params.pipe(map(params => params['id']));
+    this.entries$ = this.channelId$.pipe(switchMap(_ => this.channelService.entiresOrderedByDate()))
   }
 
   ngOnInit(): void {
-    // this.entries$ = this.channelId$.pipe(map(_ => this.entryService.entriesForFeed))
   }
-
-
 }
