@@ -6,6 +6,7 @@ export interface Doc {
 export interface FeedDoc extends Doc {
     type: 'feed',
     title: string,
+    badge?: string,
     url: string,
     fetch: {
         lastSuccessfulAt: Date,

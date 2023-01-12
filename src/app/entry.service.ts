@@ -35,8 +35,9 @@ export class EntryService {
     const feedPart = feedId.substring(feedId.indexOf(':'));
     const result = await this.databaseService.db.allDocs({
       include_docs: true,
-      startkey: EntryService.ID_PREFIX + feedPart,
-      endkey: EntryService.ID_PREFIX + feedPart + '\ufff0',
+      descending: true,
+      startkey: EntryService.ID_PREFIX + feedPart + '\ufff0',
+      endkey: EntryService.ID_PREFIX + feedPart,
     });
     return result.rows.map((row: any) => row.doc);
   }

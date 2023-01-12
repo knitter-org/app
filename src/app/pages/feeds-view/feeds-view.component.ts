@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { ActivatedRoute, Router } from '@angular/router';
+import { faArrowsRotate, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
 import { EntryDoc, FeedDoc } from 'src/app/database.models';
 import { EntryService } from 'src/app/entry.service';
@@ -13,6 +13,7 @@ import { FeedService } from 'src/app/feed.service';
 })
 export class FeedsViewComponent {
   fetchIcon = faArrowsRotate;
+  editIcon = faEdit;
 
   feedId$ = new BehaviorSubject<string|undefined>(undefined);
   feed$: Observable<FeedDoc>;
@@ -20,6 +21,7 @@ export class FeedsViewComponent {
 
   constructor(
     route: ActivatedRoute,
+    private router: Router,
     private feedService: FeedService,
     private entryService: EntryService
   ) {
@@ -30,5 +32,8 @@ export class FeedsViewComponent {
 
   async forceFetch() {
     await this.feedService.fetchEntries(this.feedId$.value!);
+  }
+  async editFeed() {
+    await this.router.navigate(['feeds', this.feedId$.value, 'edit']);
   }
 }
