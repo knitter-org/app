@@ -28,6 +28,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@ng-bootstrap/ng-bootstrap": "^14.0.0",
     "@ngneat/until-destroy": "^9.2.2",
+    "@ngrx/component-store": "^15.1.0",
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
     "karma-firefox-launcher": "^2.1.2",

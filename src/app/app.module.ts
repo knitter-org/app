@@ -37,7 +37,7 @@ import { EntryListComponent } from './elements/entry-list/entry-list.component';
     AppRoutingModule,
     ReactiveFormsModule,
     NgbModule,
-    FontAwesomeModule
+    FontAwesomeModule,
   ],
   providers: [FeedReaderService],
   bootstrap: [AppComponent]

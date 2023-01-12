@@ -2,4 +2,10 @@
   {{ channelId$ | async }}
 </h3>
 
+<div *ngIf="isLoading$ | async" class="text-center">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
 <app-entry-list [entries$]="entries$"></app-entry-list>
