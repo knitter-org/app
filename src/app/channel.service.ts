@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { EntryDoc } from './database.models';
+import { ChannelDoc, EntryDoc } from './database.models';
 import { DatabaseService } from './database.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChannelService {
+  static ID_PREFIX = 'channel:';
 
   constructor(
     private databaseService: DatabaseService
@@ -19,6 +20,10 @@ export class ChannelService {
     });
 
     return result.rows.map((row: any) => row.doc);
+  }
+
+  async getChannel(channelId: string): Promise<ChannelDoc> {
+    return this.databaseService.db.get(channelId);
   }
 
   private dbEntryMapFunc = (doc: any) => {

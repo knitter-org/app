@@ -69,7 +69,6 @@ export class FeedService {
 
   async getFeed(feedId: string): Promise<FeedDoc> {
     const feed = await this.databaseService.db.get(feedId);
-    feed.fetch.lastSuccessfulAt = new Date(feed.fetch.lastSuccessfulAt);
     return feed;
   }
 

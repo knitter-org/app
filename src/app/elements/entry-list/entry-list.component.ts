@@ -9,6 +9,6 @@ import { EntryDoc } from 'src/app/database.models';
 })
 export class EntryListComponent {
 
-  @Input() entries$!: Observable<EntryDoc[]>;
+  @Input() entries$?: Observable<EntryDoc[]>;
 
 }

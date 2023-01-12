@@ -1,6 +1,6 @@
 export interface Doc {
     _id: string,
-    type: 'feed' | 'entry',
+    type: 'feed' | 'entry' | 'channel',
 }
 
 export interface FeedDoc extends Doc {
@@ -19,4 +19,9 @@ export interface EntryDoc extends Doc {
     text: string,
     url: string,
     publishedAt: Date,
+}
+
+export interface ChannelDoc extends Doc {
+  type: 'channel',
+  title: string,
 }
