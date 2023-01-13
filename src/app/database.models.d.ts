@@ -21,6 +21,10 @@ export interface EntryDoc extends Doc {
     publishedAt: Date,
 }
 
+export interface ChannelOrderDoc extends Doc {
+  order: string[],
+}
+
 export interface ChannelDoc extends Doc {
   type: 'channel',
   title: string,

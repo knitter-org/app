@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ChannelService } from 'src/app/channel.service';
 import { DatabaseService } from '../../database.service';
 
 @Injectable({
@@ -21,7 +22,7 @@ export class InitializationService {
       title: 'Timeline',
     });
     await this.databaseService.db.put({
-      _id: 'channels',
+      _id: ChannelService.ORDER_DOC_ID,
       order: ['channel:timeline'],
     });
   }

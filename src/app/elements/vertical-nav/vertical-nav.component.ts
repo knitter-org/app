@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FeedData } from '@extractus/feed-extractor';
 import { faGear, faRss, faPlus, faNewspaper }  from '@fortawesome/free-solid-svg-icons';
-import { from, Observable } from 'rxjs';
-import { FeedDoc } from 'src/app/database.models';
-import { FeedService } from 'src/app/feed.service';
+import { map } from 'rxjs';
+import { VerticalNavStore } from './vertical-nav.store';
 
 @Component({
   selector: 'app-vertical-nav',
   templateUrl: './vertical-nav.component.html',
-  styleUrls: ['./vertical-nav.component.less']
+  styleUrls: ['./vertical-nav.component.less'],
+  providers: [VerticalNavStore],
 })
 export class VerticalNavComponent implements OnInit {
   faGear = faGear;
@@ -16,11 +15,18 @@ export class VerticalNavComponent implements OnInit {
   faPlus = faPlus;
   faNewspaper = faNewspaper;
 
-  feeds$: Observable<FeedDoc[]> | undefined;
+  readonly channels$ = this.store.state$.pipe(
+    map((state) => state.channels)
+  );
 
-  constructor(private feedService: FeedService) {}
-  
+  readonly feedsAndStatus$ = this.store.state$.pipe(
+    map((state) => state.feedsAndStatus)
+  );
+
+  constructor(private store: VerticalNavStore) {}
+
   async ngOnInit() {
-    this.feeds$ = from(this.feedService.getFeeds());
+    this.store.fetchChannels();
+    this.store.fetchFeeds();
   }
 }

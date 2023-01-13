@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ChannelDoc, EntryDoc } from './database.models';
+import { ChannelDoc, ChannelOrderDoc, EntryDoc } from './database.models';
 import { DatabaseService } from './database.service';
 
 @Injectable({
@@ -7,6 +7,7 @@ import { DatabaseService } from './database.service';
 })
 export class ChannelService {
   static ID_PREFIX = 'channel:';
+  static ORDER_DOC_ID = 'channels';
 
   constructor(
     private databaseService: DatabaseService
@@ -24,6 +25,13 @@ export class ChannelService {
 
   async getChannel(channelId: string): Promise<ChannelDoc> {
     return this.databaseService.db.get(channelId);
+  }
+
+  async getAllChannelsSorted(): Promise<ChannelDoc[]> {
+    const orderDoc: ChannelOrderDoc = this.databaseService.db.get(ChannelService.ORDER_DOC_ID);
+    return this.databaseService.db.allDocs({
+      keys: orderDoc.order,
+    });
   }
 
   private dbEntryMapFunc = (doc: any) => {

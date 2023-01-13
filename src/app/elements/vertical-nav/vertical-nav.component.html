@@ -11,13 +11,13 @@
 
 <nav class="nav nav-pills flex-column mt-2 feeds">
   <a
-    *ngFor="let feed of feeds$ | async"
-    [routerLink]="['/feeds', feed._id]"
+    *ngFor="let feedAndStatus of feedsAndStatus$ | async"
+    [routerLink]="['/feeds', feedAndStatus.feed._id]"
     routerLinkActive="active"
     ariaCurrentWhenActive="page"
     class="nav-link"
   >
-    <fa-icon [icon]="faRss"></fa-icon> {{ feed.title }}
+    <fa-icon [icon]="faRss"></fa-icon> {{ feedAndStatus.feed.title }}
   </a>
 </nav>
 
