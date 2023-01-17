@@ -1,0 +1,47 @@
+<div class="card">
+  <div class="card-header">
+    Server
+  </div>
+  <div class="card-body">
+    <div class="sync-status">
+      Synchronization Status:
+      <container-element [ngSwitch]="syncStatus$ | async">
+        <span *ngSwitchCase="'disabled'" class="badge text-bg-secondary">Disabled</span>
+        <span *ngSwitchCase="'connected'" class="badge text-bg-success">Connected</span>
+        <span *ngSwitchCase="'disconnected'" class="badge text-bg-warning">Disonnected</span>
+        <span *ngSwitchCase="'error'" class="badge text-bg-error">Error</span>
+      </container-element>
+    </div>
+
+    <hr/>
+
+    <ng-container *ngTemplateOutlet="form_template"></ng-container>
+  </div>
+</div>
+
+<ng-template #form_template>
+  <form [formGroup]="form">
+    <div class="form-floating mb-3">
+      <input
+        formControlName="serverUrl"
+        [class.is-invalid]="form.errors"
+        id="serverUrl"
+        type="text"
+        placeholder="https://example.com/"
+        class="form-control"
+      />
+      <label for="serverUrl">Knitter Server URL</label>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button
+        type="button"
+        [disabled]="!form.valid"
+        (click)="updateServerSettings()"
+        class="btn btn-primary"
+      >
+        Apply
+      </button>
+    </div>
+  </form>
+</ng-template>

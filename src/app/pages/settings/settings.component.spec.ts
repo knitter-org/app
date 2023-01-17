@@ -1,23 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { createComponentFactory, Spectator } from '@ngneat/spectator';
+import { MockComponent } from 'ng-mocks';
+import { FeedProxySettingsComponent } from './feed-proxy-settings/feed-proxy-settings.component';
+import { ServerSettingsComponent } from './server-settings/server-settings.component';
 
 import { SettingsComponent } from './settings.component';
 
 describe('SettingsComponent', () => {
-  let component: SettingsComponent;
-  let fixture: ComponentFixture<SettingsComponent>;
+  let spectator: Spectator<SettingsComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ SettingsComponent ]
-    })
-    .compileComponents();
+  const createComponent = createComponentFactory({
+    component: SettingsComponent,
+    declarations: [
+      MockComponent(ServerSettingsComponent),
+      MockComponent(FeedProxySettingsComponent),
+    ],
+    shallow: true,
+  });
 
-    fixture = TestBed.createComponent(SettingsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    spectator = createComponent();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });

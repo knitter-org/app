@@ -17,6 +17,8 @@ import { FeedReaderService } from './feed-reader.service';
 import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
 import { EntryFormatListItemComponent } from './elements/entry-format-list-item/entry-format-list-item.component';
 import { EntryListComponent } from './elements/entry-list/entry-list.component';
+import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
+import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { EntryListComponent } from './elements/entry-list/entry-list.component';
     FeedsAddComponent,
     FeedsViewComponent,
     EntryFormatListItemComponent,
-    EntryListComponent
+    EntryListComponent,
+    ServerSettingsComponent,
+    FeedProxySettingsComponent
   ],
   imports: [
     BrowserModule,

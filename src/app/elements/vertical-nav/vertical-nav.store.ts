@@ -50,7 +50,6 @@ export class VerticalNavStore extends ComponentStore<State> {
     trigger$.pipe(
       tap((_) => this.patchState({ isFeedsLoading: true })),
       switchMap((_) => this.feedService.getFeeds()),
-      tap((feeds) => console.log(feeds)),
       tapResponse(
         (feeds) =>
           this.patchState({

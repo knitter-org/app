@@ -1,0 +1,6 @@
+{
+  "/knitter-server": {
+      "target": "http://localhost:3000",
+      "pathRewrite": { "^/knitter-server": "" }
+  }
+}
