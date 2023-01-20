@@ -1,4 +1,4 @@
-name: GitHub Pages
+name: Build and Release
 
 on:
   workflow_dispatch:
@@ -31,10 +31,15 @@ jobs:
     - name: Build
       run: npm run build:prod -- --base-href /
 
+    - name: get-npm-version
+      id: app-version
+      uses: martinbeentjes/npm-get-version-action@main
+
     - name: Compress Files
-      run: zip -r app.zip dist/knitter/*
+      run: zip -j -r app.zip dist/knitter/*
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         files: app.zip
+        tag_name: v${{ steps.app-version.outputs.current-version}}
