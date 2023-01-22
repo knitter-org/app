@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SyncSettingsDoc } from 'src/app/database.models';
-import { DatabaseService } from 'src/app/database.service';
-import CustomValidators from 'src/app/utils/custom-validators';
+import { SyncSettingsDoc } from 'app/database.models';
+import { DatabaseService } from 'app/database.service';
+import CustomValidators from 'app/utils/custom-validators';
 
 @Component({
   selector: 'app-server-settings',

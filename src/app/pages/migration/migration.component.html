@@ -1,0 +1,28 @@
+<div class="row justify-content-center align-items-center">
+  <div class="col col-12 col-md-10 col-lg-6 box rounded-1 p-4">
+    <h3>Knitter was updated!</h3>
+    <p class="lead">
+      Your database must be migrated from schema
+      <span class="no-line-break"
+        >version {{ currentSchemaVersion }} to {{ targetSchemaVersion }}</span
+      >.
+    </p>
+    <div class="d-flex justify-content-end">
+      <button
+        (click)="onMigrateClick()"
+        [disabled]="migrationActive"
+        type="button"
+        class="btn btn-primary"
+      >
+        <div
+          *ngIf="migrationActive"
+          class="spinner-border spinner-border-sm"
+          role="status"
+        >
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        Start Migration
+      </button>
+    </div>
+  </div>
+</div>

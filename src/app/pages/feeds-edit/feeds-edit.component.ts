@@ -3,8 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
-import { FeedDoc } from 'src/app/database.models';
-import { FeedService } from 'src/app/feed.service';
+import { FeedDoc } from 'app/database.models';
+import { FeedService } from 'app/feed.service';
 
 @UntilDestroy()
 @Component({
@@ -19,6 +19,7 @@ export class FeedsEditComponent {
   form = new FormGroup({
     title: new FormControl('', [Validators.required]),
     badge: new FormControl(''),
+    fetchIntervalMinutes: new FormControl('', [Validators.required, Validators.min(1)]),
   });
 
   constructor(
@@ -44,6 +45,7 @@ export class FeedsEditComponent {
       feed && this.form.setValue({
         title: feed.title,
         badge: feed.badge || '',
+        fetchIntervalMinutes: '' + feed.fetch.intervalMinutes,
       })
     );
   }

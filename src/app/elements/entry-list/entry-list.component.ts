@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EntryDoc } from 'src/app/database.models';
+import { EntryDoc } from 'app/database.models';
 
 @Component({
   selector: 'app-entry-list',

@@ -28,6 +28,21 @@
     <label for="badge">Badge</label>
   </div>
 
+  <div class="input-group mb-3">
+    <div class="form-floating">
+      <input
+        formControlName="fetchIntervalMinutes"
+        [class.is-invalid]="form.get('fetchIntervalMinutes')?.errors"
+        id="fetchIntervalMinutes"
+        type="text"
+        placeholder="5"
+        class="form-control"
+      />
+      <label for="fetchIntervalMinutes">Fetch Interval</label>
+    </div>
+    <span class="input-group-text">Minutes</span>
+  </div>
+
   <div class="d-flex justify-content-end">
     <button
       type="button"

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { forkJoin, Observable, switchMap, tap } from 'rxjs';
-import { ChannelService } from 'src/app/channel.service';
-import { ChannelDoc, EntryDoc } from 'src/app/database.models';
+import { ChannelService } from 'app/channel.service';
+import { ChannelDoc, EntryDoc } from 'app/database.models';
 
 export interface ChannelViewState {
   channel?: ChannelDoc;

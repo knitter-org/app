@@ -19,6 +19,7 @@ import { EntryFormatListItemComponent } from './elements/entry-format-list-item/
 import { EntryListComponent } from './elements/entry-list/entry-list.component';
 import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
 import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
+import { MigrationComponent } from './pages/migration/migration.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings
     EntryFormatListItemComponent,
     EntryListComponent,
     ServerSettingsComponent,
-    FeedProxySettingsComponent
+    FeedProxySettingsComponent,
+    MigrationComponent
   ],
   imports: [
     BrowserModule,

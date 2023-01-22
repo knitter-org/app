@@ -28,7 +28,11 @@ export class FeedService {
       type: 'feed',
       title: fetchResult.title,
       url: url,
-      fetch: { lastSuccessfulAt: fetchedAt },
+      fetch: {
+        lastSuccessfulAt: fetchedAt,
+        intervalMinutes: 5,
+      },
+      retention: { strategy: 'keep-forever' },
     };
 
     await this.saveFeed(feedDoc);

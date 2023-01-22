@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { EntryDoc } from 'src/app/database.models';
+import { EntryDoc } from 'app/database.models';
 
 @Component({
   selector: 'app-entry-format-list-item',

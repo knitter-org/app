@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FeedService } from 'src/app/feed.service';
+import { FeedService } from 'app/feed.service';
 
 import { EntryFormatListItemComponent } from './entry-format-list-item.component';
 

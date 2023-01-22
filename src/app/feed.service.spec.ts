@@ -33,8 +33,10 @@ describe('FeedService', () => {
         title: 'test-feed',
         url: 'http://example.com',
         fetch: {
-          lastSuccessfulAt: new Date('2020-10-10')
-        }
+          lastSuccessfulAt: new Date('2020-10-10'),
+          intervalMinutes: 5,
+        },
+        retention: { strategy: 'keep-forever' },
       }));
     });
 

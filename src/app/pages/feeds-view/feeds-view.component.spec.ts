@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { of } from 'rxjs';
-import { EntryListComponent } from 'src/app/elements/entry-list/entry-list.component';
+import { EntryListComponent } from 'app/elements/entry-list/entry-list.component';
 import { FeedsViewComponent } from './feeds-view.component';
 
 describe('FeedsViewComponent', () => {

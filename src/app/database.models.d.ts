@@ -1,6 +1,12 @@
 export interface Doc {
     _id: string,
-    type: 'feed' | 'entry' | 'channel' | 'settings',
+    type: 'feed' | 'entry' | 'channel' | 'settings' | 'database-info',
+}
+
+export interface DatabaseInfoDoc extends Doc {
+  _id: 'database-info',
+  type: 'database-info',
+  schemaVersion: number,
 }
 
 export interface FeedDoc extends Doc {
@@ -10,7 +16,17 @@ export interface FeedDoc extends Doc {
     url: string,
     fetch: {
         lastSuccessfulAt: Date,
-    }
+        intervalMinutes: number;
+    },
+    retention: RetentionKeepForever | RetentionDeleteOlderThan
+}
+
+export interface RetentionKeepForever {
+  strategy: 'keep-forever';
+}
+export interface RetentionDeleteOlderThan {
+  strategy: 'delete-older-than';
+  thresholdHours: number;
 }
 
 export interface EntryDoc extends Doc {

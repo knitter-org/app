@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { read } from '@extractus/feed-extractor'
+import { extract } from '@extractus/feed-extractor'
 import { DatabaseService } from './database.service';
 
 export interface FeedFetchResult {
@@ -32,7 +32,7 @@ export class FeedReaderService {
   }
 
   private async fetchFeedInternal(url: string): Promise<FeedFetchResult> {
-    const result = await read(url, undefined, { headers: [] });
+    const result = await extract(url, undefined, { headers: [] });
 
     const entries = result.entries!.map(entry => ({
       title: entry.title!,

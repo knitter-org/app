@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { CanActivateChild } from '@angular/router';
 import { CanActivate, Router, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { InitializationService } from './initialization.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class InitializedGuardService implements CanActivate {
+export class InitializedGuardService implements CanActivate, CanActivateChild {
 
   constructor(
     private router: Router,
@@ -19,5 +20,11 @@ export class InitializedGuardService implements CanActivate {
       this.router.navigate(['initialize']);
       return false;
     }
+  }
+
+  async canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Promise<boolean> {
+    return this.canActivate(childRoute, state);
   }
 }

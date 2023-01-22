@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ChannelService } from 'src/app/channel.service';
+import { ChannelService } from 'app/channel.service';
 import { DatabaseService } from '../../database.service';
 
 @Injectable({

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
-import { EntryListComponent } from 'src/app/elements/entry-list/entry-list.component';
+import { EntryListComponent } from 'app/elements/entry-list/entry-list.component';
 
 import { ChannelsViewComponent } from './channels-view.component';
 

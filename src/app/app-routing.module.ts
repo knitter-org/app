@@ -9,20 +9,24 @@ import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-colu
 import { VerticalNavComponent } from './elements/vertical-nav/vertical-nav.component';
 import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
 import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
+import { MigrationComponent } from './pages/migration/migration.component';
+import { MigratedGuard } from './pages/migration/migrated.guard';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'channels/timeline' },
   { path: 'initialize', component: InitializationComponent },
+  { path: 'migrate', component: MigrationComponent, canActivate: [InitializedGuardService] },
   {
     path: '',
     component: TwoColumnsLayoutComponent,
+    canActivateChild: [InitializedGuardService, MigratedGuard],
     children: [
       { path: '', component: VerticalNavComponent, outlet: 'aside' },
-      { path: 'channels/:id', component: ChannelsViewComponent, canActivate: [InitializedGuardService] },
-      { path: 'feeds/add', component: FeedsAddComponent, canActivate: [InitializedGuardService] },
-      { path: 'feeds/:id/edit', component: FeedsEditComponent, canActivate: [InitializedGuardService] },
-      { path: 'feeds/:id', component: FeedsViewComponent, canActivate: [InitializedGuardService] },
-      { path: 'settings', component: SettingsComponent, canActivate: [InitializedGuardService] },
+      { path: 'channels/:id', component: ChannelsViewComponent },
+      { path: 'feeds/add', component: FeedsAddComponent },
+      { path: 'feeds/:id/edit', component: FeedsEditComponent },
+      { path: 'feeds/:id', component: FeedsViewComponent },
+      { path: 'settings', component: SettingsComponent },
     ]
   },
 
