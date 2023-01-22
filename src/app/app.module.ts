@@ -20,6 +20,7 @@ import { EntryListComponent } from './elements/entry-list/entry-list.component';
 import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
 import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
 import { MigrationComponent } from './pages/migration/migration.component';
+import { ScheduledFeedFetcherService } from './scheduled-feed-fetcher.service';
 
 @NgModule({
   declarations: [
@@ -48,4 +49,6 @@ import { MigrationComponent } from './pages/migration/migration.component';
   providers: [FeedReaderService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private _scheduledFeedFetcherService: ScheduledFeedFetcherService) {}
+}
