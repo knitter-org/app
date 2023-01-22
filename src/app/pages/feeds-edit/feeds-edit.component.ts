@@ -55,6 +55,10 @@ export class FeedsEditComponent {
       ...this.feed$.value!,
       title: this.form.controls.title.value!,
       badge: this.form.controls.badge.value!,
+      fetch: {
+        ...this.feed$.value?.fetch!,
+        intervalMinutes: +this.form.controls.fetchIntervalMinutes.value!,
+      },
     });
     this.router.navigate(['feeds', this.feedId$.value]);
   }

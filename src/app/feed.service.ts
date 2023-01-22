@@ -68,16 +68,20 @@ export class FeedService {
       startkey: FeedService.ID_PREFIX,
       endkey: FeedService.ID_PREFIX + '\ufff0',
     });
-    return result.rows.map((row: any) => row.doc);
+    return result.rows.map((row: any) => this.mapToFeedDoc(row.doc));
   }
 
   async getFeed(feedId: string): Promise<FeedDoc> {
     const feed: FeedDoc = await this.databaseService.db.get(feedId);
-    feed.fetch.lastSuccessfulAt = new Date(feed.fetch.lastSuccessfulAt);
-    return feed;
+    return this.mapToFeedDoc(feed);
   }
 
-  generateFeedId(url: string): string {
+  private mapToFeedDoc(doc: any): FeedDoc {
+    doc.fetch.lastSuccessfulAt = new Date(doc.fetch.lastSuccessfulAt);
+    return doc as FeedDoc;
+  }
+
+  private generateFeedId(url: string): string {
     const hostname = new URL(url).hostname;
     const hash = hashCode(url).toString(36);
     return `${FeedService.ID_PREFIX}${hostname}-${hash}`;
