@@ -42,7 +42,7 @@ export class FeedService {
   }
 
   async saveFeed(feedDoc: FeedDoc): Promise<void> {
-    return this.databaseService.put(feedDoc);
+    await this.databaseService.put(feedDoc);
   }
 
   async fetchEntries(feedId: string) {

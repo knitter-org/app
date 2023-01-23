@@ -28,10 +28,12 @@ export class ChannelService {
   }
 
   async getAllChannelsSorted(): Promise<ChannelDoc[]> {
-    const orderDoc: ChannelOrderDoc = this.databaseService.db.get(ChannelService.ORDER_DOC_ID);
-    return this.databaseService.db.allDocs({
+    const orderDoc: ChannelOrderDoc = await this.databaseService.db.get(ChannelService.ORDER_DOC_ID);
+    const allDocs = await this.databaseService.db.allDocs({
       keys: orderDoc.order,
+      include_docs: true,
     });
+    return allDocs.rows.map(row => row.doc! as unknown as ChannelDoc);
   }
 
   private dbEntryMapFunc = (doc: any) => {

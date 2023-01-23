@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
-import { Doc } from './database.models';
+import { Doc, SyncSettingsDoc } from './database.models';
 
+import * as PouchDB from 'pouchdb';
 (window as any).global = window;
-// import * as PouchDB from 'pouchdb';
-const PouchDB = require('pouchdb').default.defaults();
+// const PouchDB = require('pouchdb').default.defaults();
 
 export type SyncStatus = 'disabled' | 'disconnected' | 'connected' | 'error';
 
@@ -15,20 +15,20 @@ export class DatabaseService {
 
   private syncHandler?: any;
 
-  public db: any;
+  public db;
 
   private _syncStatus$ = new BehaviorSubject<SyncStatus>('disabled');
   readonly syncStatus$ = this._syncStatus$.pipe(distinctUntilChanged());
 
   constructor() {
     this.db = new PouchDB('knitter');
-    // this.tryResumeServerSync();
+    this.tryResumeServerSync();
   }
 
   private async tryResumeServerSync() {
     // Try to resume server sync if configured via settings doc
     try {
-      const syncSettingsDoc = await this.db.get('settings:sync');
+      const syncSettingsDoc: SyncSettingsDoc = await this.db.get('settings:sync');
       this.startServerSync(syncSettingsDoc.serverUrl);
     } catch {}
   }
@@ -52,9 +52,6 @@ export class DatabaseService {
     }).on('paused', (info: any) => {
       console.log('sync paused', info);
       this._syncStatus$.next('disconnected');
-    }).on('active', (info: any) => {
-      console.log('sync active', info);
-      this._syncStatus$.next('connected');
     }).on('error', (err: any) => {
       console.log('sync error', err);
       this._syncStatus$.next('error');

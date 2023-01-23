@@ -23,7 +23,7 @@ export class ServerSettingsComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      const syncSettingsDoc = await this.databaseService.db.get('settings:sync');
+      const syncSettingsDoc: SyncSettingsDoc = await this.databaseService.db.get('settings:sync');
       this.form.patchValue({
         serverUrl: syncSettingsDoc.serverUrl,
       });

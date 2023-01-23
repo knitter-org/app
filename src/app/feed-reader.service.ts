@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { extract } from '@extractus/feed-extractor'
+import { FeedProxySettingsDoc } from './database.models';
 import { DatabaseService } from './database.service';
 
 export interface FeedFetchResult {
@@ -21,7 +22,7 @@ export class FeedReaderService {
 
   async fetchFeed(url: string): Promise<FeedFetchResult> {
     try {
-      const { proxyUrl } = await this.databaseService.db.get('settings:feed-proxy');
+      const { proxyUrl }: FeedProxySettingsDoc = await this.databaseService.db.get('settings:feed-proxy');
       const base64Url = btoa(url);
       url = `${proxyUrl}/${base64Url}`;
     } catch (e) {
