@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { Doc, SyncSettingsDoc } from './database.models';
 
-import * as PouchDB from 'pouchdb';
-(window as any).global = window;
-// const PouchDB = require('pouchdb').default.defaults();
+import PouchDB from 'pouchdb';
 
 export type SyncStatus = 'disabled' | 'disconnected' | 'connected' | 'error';
 
@@ -15,7 +13,7 @@ export class DatabaseService {
 
   private syncHandler?: any;
 
-  public db;
+  public db: PouchDB.Database;
 
   private _syncStatus$ = new BehaviorSubject<SyncStatus>('disabled');
   readonly syncStatus$ = this._syncStatus$.pipe(distinctUntilChanged());
@@ -25,8 +23,11 @@ export class DatabaseService {
     this.tryResumeServerSync();
   }
 
+  /**
+   * Try to resume server sync if it was configured before.
+   * If so, a 'settings:sync' doc should exist.
+   */
   private async tryResumeServerSync() {
-    // Try to resume server sync if configured via settings doc
     try {
       const syncSettingsDoc: SyncSettingsDoc = await this.db.get('settings:sync');
       this.startServerSync(syncSettingsDoc.serverUrl);
@@ -56,5 +57,9 @@ export class DatabaseService {
       console.log('sync error', err);
       this._syncStatus$.next('error');
     });
+  }
+
+  async dropDatabase() {
+    await this.db.destroy();
   }
 }

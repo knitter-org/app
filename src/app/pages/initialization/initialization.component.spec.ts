@@ -1,23 +1,32 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { fakeAsync } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator';
 
 import { InitializationComponent } from './initialization.component';
+import { InitializationService } from './initialization.service';
 
 describe('InitializationComponent', () => {
-  let component: InitializationComponent;
-  let fixture: ComponentFixture<InitializationComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ InitializationComponent ]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(InitializationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  let spectator: Spectator<InitializationComponent>;
+  const createComponent = createComponentFactory({
+    component: InitializationComponent,
+    providers: [
+      mockProvider(Router),
+      mockProvider(InitializationService)
+    ],
+    detectChanges: false
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  beforeEach(() => spectator = createComponent());
+
+  describe('component accessed but database already initialized', () => {
+    it('should redirect to the root path', fakeAsync(() => {
+      const initializationService = spectator.inject(InitializationService);
+      initializationService.isInitialized.and.returnValue(true);
+
+      spectator.detectChanges();
+      spectator.tick();
+
+      expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/');
+    }));
   });
 });

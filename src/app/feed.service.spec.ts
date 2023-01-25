@@ -1,32 +1,25 @@
-import { TestBed } from '@angular/core/testing';
-import { EntryDoc } from './database.models';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
+import { DatabaseService } from './database.service';
 import { EntryService } from './entry.service';
 import { FeedReaderService } from './feed-reader.service';
 
 import { FeedService } from './feed.service';
 
 describe('FeedService', () => {
-  let feedService: FeedService;
-  let feedReaderService: FeedReaderService;
-  let entryService: EntryService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [FeedReaderService, EntryService]
-    });
-    feedService = TestBed.inject(FeedService);
-    feedReaderService = TestBed.inject(FeedReaderService);
-    entryService = TestBed.inject(EntryService);
+  let spectator: SpectatorService<FeedService>;
+  const createService = createServiceFactory({
+    service: FeedService,
+    providers: [DatabaseService, FeedReaderService, EntryService],
   });
 
-  it('should be created', () => {
-    expect(feedService).toBeTruthy();
-  });
+  beforeEach(() => (spectator = createService()));
+  afterEach(async () => await spectator.inject(DatabaseService).dropDatabase());
 
   describe('fetchEntries', () => {
     const feedId = 'test-feed-id';
 
     beforeEach(() => {
+      const feedService = spectator.inject(FeedService);
       spyOn(feedService, 'getFeed').and.returnValue(Promise.resolve({
         _id: 'abc123',
         type: 'feed',
@@ -41,12 +34,15 @@ describe('FeedService', () => {
     });
 
     it('should not store new entries when nothing was returned by the feed reader', async () => {
+      const entryService = spectator.inject(EntryService);
+      const feedReaderService = spectator.inject(FeedReaderService);
       spyOn(entryService, 'addEntries');
       spyOn(feedReaderService, 'fetchFeed').and.returnValue(Promise.resolve({
         title: 'test-mock-feed',
         entries: []
       }));
 
+      const feedService = spectator.inject(FeedService);
       await feedService.fetchEntries(feedId);
       expect(entryService.addEntries).not.toHaveBeenCalled();
     });

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DatabaseInfoDoc } from 'app/database.models';
+import { DatabaseInfoDoc, FeedDoc } from 'app/database.models';
 import { DatabaseService } from 'app/database.service';
 import { FeedService } from 'app/feed.service';
 import { rangeInclusive } from 'app/utils/range';
@@ -64,7 +64,7 @@ export class MigrationService {
       startkey: FeedService.ID_PREFIX,
       endkey: FeedService.ID_PREFIX + '\ufff0',
     });
-    for (let feedDoc of result.rows.map((row: any) => row.doc)) {
+    for (let feedDoc of result.rows.map(row => row.doc as unknown as FeedDoc)) {
       feedDoc.fetch.intervalMinutes = 5;
       feedDoc.retention = { strategy: 'keep-forever' };
       await this.databaseService.db.put(feedDoc);

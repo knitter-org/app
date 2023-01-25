@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChannelService } from 'app/channel.service';
+import { ChannelDoc, ChannelOrderDoc, DatabaseInfoDoc } from 'app/database.models';
 import { DatabaseService } from '../../database.service';
 
 @Injectable({
@@ -17,13 +18,32 @@ export class InitializationService {
   }
 
   async initialize() {
-    await this.databaseService.db.put({
+    await this.initializeChannels();
+    // await this.initializeDatabaseInfo();
+  }
+
+  private async initializeChannels() {
+    const timelineChannelDoc: ChannelDoc = {
       _id: 'channel:timeline',
+      type: 'channel',
       title: 'Timeline',
-    });
-    await this.databaseService.db.put({
+    };
+    await this.databaseService.db.put(timelineChannelDoc);
+
+    const channelOrderDoc: ChannelOrderDoc = {
       _id: ChannelService.ORDER_DOC_ID,
+      type: 'channel',
       order: ['channel:timeline'],
-    });
+    };
+    await this.databaseService.db.put(channelOrderDoc);
+  }
+
+  private async initializeDatabaseInfo() {
+    const dbInfoDoc: DatabaseInfoDoc = {
+      _id: 'database-info',
+      type: 'database-info',
+      schemaVersion: 1,
+    };
+    await this.databaseService.db.put(dbInfoDoc);
   }
 }
