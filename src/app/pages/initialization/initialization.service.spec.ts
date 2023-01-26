@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
-import { DatabaseService } from 'app/database.service';
+import { DatabaseService } from 'app/services/database.service';
 import { MigrationService } from '../migration/migration.service';
 
 import { InitializationService } from './initialization.service';
@@ -27,4 +27,4 @@ describe('InitializationService', () => {
     expect(await spectator.inject(MigrationService).needsMigration()).toBeFalse();
   });
 });
-FileSystemHandle
+

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { EntryDoc, FeedDoc } from './database.models';
 import { DatabaseService } from './database.service';
-import { hashCode } from './utils/string';
+import { hashCode } from 'app/utils/string';
+import { FeedService } from './feed.service';
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +43,25 @@ export class EntryService {
     return result.rows.map((row: any) => row.doc);
   }
 
+  async markEntryAsRead(entry: EntryDoc): Promise<EntryDoc> {
+    if (!entry.readAt) {
+      const copy = {
+        ...entry,
+        readAt: new Date()
+      };
+      copy._rev = (await this.databaseService.db.put(copy)).rev;
+      return copy;
+    }
+    return entry;
+  }
+
+  getFeedIdForEntryId(entryId: string): string {
+    const feedPart = entryId.substring(entryId.indexOf(':') + 2 /** !!! SHOULD BE A 1 !!! */, entryId.indexOf('/'));
+    return `${FeedService.ID_PREFIX}${feedPart}`;
+  }
+
   generateEntryId(feedDoc: FeedDoc, publishedAt: Date, url: string): string {
-    const feedPart = feedDoc._id.substring(feedDoc._id.indexOf(':'));
+    const feedPart = feedDoc._id.substring(feedDoc._id.indexOf(':') + 1);
     const datePart = publishedAt.toISOString().substring(0, 19);
     const hash = hashCode(url).toString(36);
     return `${EntryService.ID_PREFIX}${feedPart}/${datePart}-${hash}`;

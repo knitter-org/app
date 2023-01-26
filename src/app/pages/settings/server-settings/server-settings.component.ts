@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SyncSettingsDoc } from 'app/database.models';
-import { DatabaseService } from 'app/database.service';
+import { SyncSettingsDoc } from 'app/services/database.models';
+import { DatabaseService } from 'app/services/database.service';
 import CustomValidators from 'app/utils/custom-validators';
 
 @Component({

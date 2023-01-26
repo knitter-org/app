@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowsRotate, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
-import { EntryDoc, FeedDoc } from 'app/database.models';
-import { EntryService } from 'app/entry.service';
-import { FeedService } from 'app/feed.service';
+import { EntryDoc, FeedDoc } from 'app/services/database.models';
+import { EntryService } from 'app/services/entry.service';
+import { FeedService } from 'app/services/feed.service';
 
 @UntilDestroy()
 @Component({

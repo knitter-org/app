@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ChannelService } from 'app/channel.service';
-import { ChannelDoc, ChannelOrderDoc, DatabaseInfoDoc } from 'app/database.models';
-import { DatabaseService } from '../../database.service';
+import { ChannelService } from 'app/services/channel.service';
+import { ChannelDoc, ChannelOrderDoc, DatabaseInfoDoc } from 'app/services/database.models';
+import { DatabaseService } from 'app/services/database.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class InitializationService {
 
   async initialize() {
     await this.initializeChannels();
-    // await this.initializeDatabaseInfo();
+    await this.initializeDatabaseInfo();
   }
 
   private async initializeChannels() {

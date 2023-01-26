@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map } from 'rxjs';
-import { ChannelDoc } from 'app/database.models';
+import { map } from 'rxjs';
+import { ChannelDoc, EntryDoc } from 'app/services/database.models';
 import { ChannelViewStore } from './channels-view.store';
 
 @UntilDestroy()
@@ -33,5 +33,11 @@ export class ChannelsViewComponent {
     channelId$
       .pipe(untilDestroyed(this))
       .subscribe((channelId) => this.channelViewStore.updateForChannelId(channelId));
+  }
+
+  onEntryRead(entryDoc: EntryDoc) {
+    console.log('onEntryRead', entryDoc);
+
+    this.channelViewStore.markEntryAsRead(entryDoc);
   }
 }

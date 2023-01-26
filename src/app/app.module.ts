@@ -13,14 +13,15 @@ import { FeedsEditComponent } from './pages/feeds-edit/feeds-edit.component';
 import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-columns-layout.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
-import { FeedReaderService } from './feed-reader.service';
+import { FeedReaderService } from 'app/services/feed-reader.service';
 import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
 import { EntryFormatListItemComponent } from './elements/entry-format-list-item/entry-format-list-item.component';
 import { EntryListComponent } from './elements/entry-list/entry-list.component';
 import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
 import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
 import { MigrationComponent } from './pages/migration/migration.component';
-import { ScheduledFeedFetcherService } from './scheduled-feed-fetcher.service';
+import { ScheduledFeedFetcherService } from 'app/services/scheduled-feed-fetcher.service';
+import { FeedBadgePipe } from './pipes/feed-badge.pipe';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ScheduledFeedFetcherService } from './scheduled-feed-fetcher.service';
     EntryListComponent,
     ServerSettingsComponent,
     FeedProxySettingsComponent,
-    MigrationComponent
+    MigrationComponent,
+    FeedBadgePipe,
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { EntryDoc } from 'app/database.models';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { EntryDoc } from 'app/services/database.models';
 
 @Component({
   selector: 'app-entry-format-list-item',
@@ -8,6 +8,11 @@ import { EntryDoc } from 'app/database.models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EntryFormatListItemComponent {
-
   @Input() entry!: EntryDoc;
+
+  @Output() onRead = new EventEmitter();
+
+  onEntryRead() {
+    this.onRead.emit();
+  }
 }

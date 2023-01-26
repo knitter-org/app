@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { forkJoin, Observable, switchMap, tap } from 'rxjs';
-import { ChannelService } from 'app/channel.service';
-import { ChannelDoc, EntryDoc } from 'app/database.models';
+import { concatMap, forkJoin, Observable, of, switchMap, tap } from 'rxjs';
+import { ChannelService } from 'app/services/channel.service';
+import { ChannelDoc, EntryDoc } from 'app/services/database.models';
+import { EntryService } from 'app/services/entry.service';
+import { replaceElement } from 'app/utils/collections';
 
 export interface ChannelViewState {
   channel?: ChannelDoc;
@@ -12,7 +14,10 @@ export interface ChannelViewState {
 
 @Injectable()
 export class ChannelViewStore extends ComponentStore<ChannelViewState> {
-  constructor(private channelService: ChannelService) {
+  constructor(
+    private channelService: ChannelService,
+    private entryService: EntryService
+  ) {
     super({ isLoading: false });
   }
 
@@ -21,18 +26,41 @@ export class ChannelViewStore extends ComponentStore<ChannelViewState> {
       tap((_) => this.patchState({ isLoading: true })),
       switchMap((channelId) =>
         forkJoin({
-          channel: this.channelService.getChannel(ChannelService.ID_PREFIX+channelId),
+          channel: this.channelService.getChannel(
+            ChannelService.ID_PREFIX + channelId
+          ),
           entries: this.channelService.entiresOrderedByDate(),
         })
       ),
       tapResponse(
-        ({channel, entries}) =>
+        ({ channel, entries }) =>
           this.patchState({
             channel,
             entries,
             isLoading: false,
           }),
-        (error) => console.log('ChannelViewStore error:', error)
+        (error) =>
+          console.log('ChannelViewStore updateForChannelId error:', error)
+      )
+    )
+  );
+
+  readonly markEntryAsRead = this.effect((entry$: Observable<EntryDoc>) =>
+    entry$.pipe(
+      concatMap((entry) =>
+        forkJoin({
+          oldEntry: of(entry),
+          updatedEntry: this.entryService.markEntryAsRead(entry),
+          entries: this.select((state) => state.entries),
+        })
+      ),
+      tapResponse(
+        ({oldEntry, updatedEntry, entries}) =>
+          this.patchState({
+            entries: replaceElement(entries!, oldEntry, updatedEntry),
+          }),
+        (error) =>
+          console.log('ChannelViewStore updateForChannelId error:', error)
       )
     )
   );

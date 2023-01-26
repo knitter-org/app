@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FeedService } from 'app/feed.service';
+import { FeedService } from 'app/services/feed.service';
 import CustomValidators from '../../utils/custom-validators';
 
 @Component({

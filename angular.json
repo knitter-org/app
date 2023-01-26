@@ -38,7 +38,8 @@
             "allowedCommonJsDependencies": [
               "immediate",
               "spark-md5",
-              "vuvuzela"
+              "vuvuzela",
+              "fast-xml-parser"
            ]
           },
           "configurations": {

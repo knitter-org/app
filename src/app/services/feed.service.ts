@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { defer } from 'rxjs';
 import { FeedDoc } from './database.models';
 import { DatabaseService } from './database.service';
 import { EntryService } from './entry.service';
 import { FeedReaderService } from './feed-reader.service';
-import { hashCode } from './utils/string';
+import { hashCode } from 'app/utils/string';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +41,9 @@ export class FeedService {
   }
 
   async saveFeed(feedDoc: FeedDoc): Promise<void> {
+    if (!feedDoc.badge || feedDoc.badge.trim() === '') {
+      feedDoc.badge = undefined;
+    }
     await this.databaseService.put(feedDoc);
   }
 

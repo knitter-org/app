@@ -3,8 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
-import { FeedDoc } from 'app/database.models';
-import { FeedService } from 'app/feed.service';
+import { FeedDoc } from 'app/services/database.models';
+import { FeedService } from 'app/services/feed.service';
 
 @UntilDestroy()
 @Component({

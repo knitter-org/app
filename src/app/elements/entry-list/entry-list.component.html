@@ -1,5 +1,8 @@
 <ul class="list-group">
-  <li *ngFor="let entry of entries$ | async" class="list-group-item">
-    <app-entry-format-list-item [entry]="entry"></app-entry-format-list-item>
-  </li>
+  <app-entry-format-list-item
+    *ngFor="let entry of entries$ | async"
+    [entry]="entry"
+    (onRead)="onRead.emit(entry)"
+  >
+  </app-entry-format-list-item>
 </ul>

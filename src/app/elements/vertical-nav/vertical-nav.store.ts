@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { Observable, switchMap, tap } from 'rxjs';
-import { ChannelService } from 'app/channel.service';
-import { ChannelDoc, FeedDoc } from 'app/database.models';
-import { FeedService } from 'app/feed.service';
+import { ChannelService } from 'app/services/channel.service';
+import { ChannelDoc, FeedDoc } from 'app/services/database.models';
+import { FeedService } from 'app/services/feed.service';
 
 export interface FeedStatus {
   unreadEntriesCount?: number;

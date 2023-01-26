@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FeedProxySettingsDoc } from 'app/database.models';
-import { DatabaseService } from 'app/database.service';
+import { FeedProxySettingsDoc } from 'app/services/database.models';
+import { DatabaseService } from 'app/services/database.service';
 import CustomValidators from 'app/utils/custom-validators';
 
 @Component({

@@ -1,6 +1,7 @@
 export interface Doc {
-    _id: string,
-    type: 'feed' | 'entry' | 'channel' | 'settings' | 'database-info',
+  _id: string,
+  _rev?: string,
+  type: 'feed' | 'entry' | 'channel' | 'settings' | 'database-info',
 }
 
 export interface DatabaseInfoDoc extends Doc {
@@ -35,6 +36,7 @@ export interface EntryDoc extends Doc {
     text: string,
     url: string,
     publishedAt: Date,
+    readAt?: Date,
 }
 
 export interface ChannelOrderDoc extends Doc {

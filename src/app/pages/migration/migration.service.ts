@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { DatabaseInfoDoc, FeedDoc } from 'app/database.models';
-import { DatabaseService } from 'app/database.service';
-import { FeedService } from 'app/feed.service';
+import { DatabaseInfoDoc, FeedDoc } from 'app/services/database.models';
+import { DatabaseService } from 'app/services/database.service';
+import { FeedService } from 'app/services/feed.service';
 import { rangeInclusive } from 'app/utils/range';
 
 @Injectable({
