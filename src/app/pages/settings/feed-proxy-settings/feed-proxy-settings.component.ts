@@ -11,9 +11,8 @@ import CustomValidators from 'app/utils/custom-validators';
 })
 export class FeedProxySettingsComponent {
 
-
   form = new FormGroup({
-    proxyUrl: new FormControl('', [Validators.required, CustomValidators.url]),
+    proxyUrl: new FormControl('', [CustomValidators.url]),
   });
 
   constructor(
@@ -30,20 +29,29 @@ export class FeedProxySettingsComponent {
   }
 
   async updateFeedProxySettings() {
-    const proxyUrl = this.form.value.proxyUrl!;
+    const proxyUrl = this.form.value.proxyUrl?.trim();
 
-    let feedProxyDoc: FeedProxySettingsDoc;
-    try {
-      feedProxyDoc = await this.databaseService.db.get('settings:feed-proxy');
-      feedProxyDoc.proxyUrl = proxyUrl;
-    } catch {
-      feedProxyDoc = {
-        _id: 'settings:feed-proxy',
-        type: 'settings',
-        proxyUrl,
-      };
+    if (proxyUrl) {
+      // Save/update proxyUrl
+      let feedProxyDoc: FeedProxySettingsDoc;
+      try {
+        feedProxyDoc = await this.databaseService.db.get('settings:feed-proxy');
+        feedProxyDoc.proxyUrl = proxyUrl;
+      } catch {
+        feedProxyDoc = {
+          _id: 'settings:feed-proxy',
+          type: 'settings',
+          proxyUrl,
+        };
+      }
+
+      await this.databaseService.db.put(feedProxyDoc);
+    } else {
+      // Remove previous proxyUrl if exists
+      try {
+        const feedProxyDoc = await this.databaseService.db.get('settings:feed-proxy');
+        await this.databaseService.db.remove(feedProxyDoc);
+      } catch {}
     }
-
-    return this.databaseService.db.put(feedProxyDoc);
   }
 }

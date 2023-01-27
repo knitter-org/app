@@ -4,7 +4,7 @@ export default class CustomValidators {
 
   static url: ValidatorFn = (control: AbstractControl) => {
     try {
-      new URL(control.value);
+      !!control.value && new URL(control.value);
       return null;
     } catch {
       return { invalidUrl: true };

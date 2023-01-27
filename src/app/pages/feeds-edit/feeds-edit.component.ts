@@ -53,11 +53,11 @@ export class FeedsEditComponent {
   async saveFeed() {
     await this.feedService.saveFeed({
       ...this.feed$.value!,
-      title: this.form.controls.title.value!,
-      badge: this.form.controls.badge.value!,
+      title: this.form.controls.title.value!.trim(),
+      badge: this.form.controls.badge.value!.trim(),
       fetch: {
         ...this.feed$.value?.fetch!,
-        intervalMinutes: +this.form.controls.fetchIntervalMinutes.value!,
+        intervalMinutes: +this.form.controls.fetchIntervalMinutes.value!.trim(),
       },
     });
     this.router.navigate(['feeds', this.feedId$.value]);

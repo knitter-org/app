@@ -31,7 +31,7 @@ export class ServerSettingsComponent implements OnInit {
   }
 
   async updateServerSettings() {
-    const serverUrl = this.form.value.serverUrl!;
+    const serverUrl = this.form.value.serverUrl!.trim();
 
     let syncSettingsDoc: SyncSettingsDoc;
     try {

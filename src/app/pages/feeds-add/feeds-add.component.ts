@@ -18,7 +18,7 @@ export class FeedsAddComponent {
 
   async addFeed() {
     try {
-      const url = this.form.value.url!;
+      const url = this.form.value.url!.trim();
       const feedId = await this.feedService.addFeed(url);
       this.router.navigate(['feeds', feedId]);
     } catch {

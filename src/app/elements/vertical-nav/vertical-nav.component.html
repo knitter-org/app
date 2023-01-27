@@ -9,6 +9,8 @@
   </a>
 </nav>
 
+<hr />
+
 <nav class="nav nav-pills flex-column mt-2 feeds">
   <a
     *ngFor="let feedAndStatus of feedsAndStatus$ | async"
@@ -20,6 +22,8 @@
     <fa-icon [icon]="faRss"></fa-icon> {{ feedAndStatus.feed.title }}
   </a>
 </nav>
+
+<hr />
 
 <nav class="nav nav-pills flex-column mt-2 channels">
   <a

@@ -22,6 +22,7 @@ import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings
 import { MigrationComponent } from './pages/migration/migration.component';
 import { ScheduledFeedFetcherService } from 'app/services/scheduled-feed-fetcher.service';
 import { FeedBadgePipe } from './pipes/feed-badge.pipe';
+import { DeleteDatabaseComponent } from './pages/settings/delete-database/delete-database.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { FeedBadgePipe } from './pipes/feed-badge.pipe';
     FeedProxySettingsComponent,
     MigrationComponent,
     FeedBadgePipe,
+    DeleteDatabaseComponent,
   ],
   imports: [
     BrowserModule,

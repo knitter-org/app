@@ -36,7 +36,7 @@
     <div class="d-flex justify-content-end">
       <button
         type="button"
-        [disabled]="!form.valid"
+        [disabled]="form.pristine || !form.valid"
         (click)="updateServerSettings()"
         class="btn btn-primary"
       >
