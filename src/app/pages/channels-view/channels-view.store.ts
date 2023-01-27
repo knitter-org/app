@@ -29,7 +29,7 @@ export class ChannelViewStore extends ComponentStore<ChannelViewState> {
           channel: this.channelService.getChannel(
             ChannelService.ID_PREFIX + channelId
           ),
-          entries: this.channelService.entiresOrderedByDate(),
+          entries: this.channelService.unreadEntiresOrderedByDate(),
         })
       ),
       tapResponse(

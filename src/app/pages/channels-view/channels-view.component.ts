@@ -36,8 +36,6 @@ export class ChannelsViewComponent {
   }
 
   onEntryRead(entryDoc: EntryDoc) {
-    console.log('onEntryRead', entryDoc);
-
     this.channelViewStore.markEntryAsRead(entryDoc);
   }
 }

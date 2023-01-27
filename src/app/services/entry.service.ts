@@ -34,7 +34,7 @@ export class EntryService {
   }
 
   async entriesForFeed(feedId: string): Promise<EntryDoc[]> {
-    const feedPart = feedId.substring(feedId.indexOf(':'));
+    const feedPart = feedId.substring(feedId.indexOf(':') + 1);
     const result = await this.databaseService.db.allDocs({
       include_docs: true,
       descending: true,

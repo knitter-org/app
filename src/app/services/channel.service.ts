@@ -13,11 +13,11 @@ export class ChannelService {
     private databaseService: DatabaseService
   ) {}
 
-  async entiresOrderedByDate(): Promise<EntryDoc[]> {
-    const result = await this.databaseService.db.query(this.dbEntryMapFunc, {
+  async unreadEntiresOrderedByDate(): Promise<EntryDoc[]> {
+    const result = await this.databaseService.db.query(this.dbUnreadEntryMapFunc, {
       descending: true,
       include_docs: true,
-      limit: 10,
+      limit: 20,
     });
 
     return result.rows.map((row: any) => row.doc);
@@ -36,8 +36,8 @@ export class ChannelService {
     return allDocs.rows.map(row => row.doc! as unknown as ChannelDoc);
   }
 
-  private dbEntryMapFunc = (doc: any) => {
-    if (doc.type === 'entry') {
+  private dbUnreadEntryMapFunc = (doc: EntryDoc) => {
+    if (doc.type === 'entry' && !doc.readAt) {
       emit(doc.publishedAt);
     }
   };
