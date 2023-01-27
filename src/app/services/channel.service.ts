@@ -43,4 +43,5 @@ export class ChannelService {
   };
 }
 
+// Pouchdb emit method
 declare var emit: any;

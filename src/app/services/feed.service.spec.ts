@@ -9,11 +9,28 @@ describe('FeedService', () => {
   let spectator: SpectatorService<FeedService>;
   const createService = createServiceFactory({
     service: FeedService,
-    providers: [DatabaseService, FeedReaderService, EntryService],
+    providers: [DatabaseService, EntryService],
+    mocks: [FeedReaderService],
   });
 
   beforeEach(() => (spectator = createService()));
   afterEach(async () => await spectator.inject(DatabaseService).dropDatabase());
+
+  describe('fetchEntries', () => {
+    it('should assign a well-formed id', async () => {
+      const feedReaderServiceSpy = spectator.inject(FeedReaderService);
+      feedReaderServiceSpy.fetchFeed.and.returnValue(Promise.resolve({
+        title: 'Test Feed',
+        entries: [],
+      }))
+
+      let feedId = await spectator.service.addFeed('https://example.com/feed?format=rss');
+      expect(feedId).toEqual('feed:example.com-pb3n7w');
+
+      feedId = await spectator.service.addFeed('https://example.com/1');
+      expect(feedId).toEqual('feed:example.com-se6llc');
+    });
+  });
 
   describe('fetchEntries', () => {
     const feedId = 'test-feed-id';
@@ -35,9 +52,10 @@ describe('FeedService', () => {
 
     it('should not store new entries when nothing was returned by the feed reader', async () => {
       const entryService = spectator.inject(EntryService);
-      const feedReaderService = spectator.inject(FeedReaderService);
       spyOn(entryService, 'addEntries');
-      spyOn(feedReaderService, 'fetchFeed').and.returnValue(Promise.resolve({
+
+      const feedReaderServiceSpy = spectator.inject(FeedReaderService);
+      feedReaderServiceSpy.fetchFeed.and.returnValue(Promise.resolve({
         title: 'test-mock-feed',
         entries: []
       }));

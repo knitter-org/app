@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { concatMap, forkJoin, Observable, of, switchMap, tap } from 'rxjs';
+import { concatMap, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ChannelService } from 'app/services/channel.service';
 import { ChannelDoc, EntryDoc } from 'app/services/database.models';
 import { EntryService } from 'app/services/entry.service';
@@ -51,7 +51,7 @@ export class ChannelViewStore extends ComponentStore<ChannelViewState> {
         forkJoin({
           oldEntry: of(entry),
           updatedEntry: this.entryService.markEntryAsRead(entry),
-          entries: this.select((state) => state.entries),
+          entries: this.select((state) => state.entries).pipe(take(1)),
         })
       ),
       tapResponse(

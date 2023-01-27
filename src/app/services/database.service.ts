@@ -48,13 +48,10 @@ export class DatabaseService {
       live: true,
       retry: true
     }).on('change', (change: any) => {
-      console.log('sync change', change);
       this._syncStatus$.next('connected');
     }).on('paused', (info: any) => {
-      console.log('sync paused', info);
       this._syncStatus$.next('disconnected');
     }).on('error', (err: any) => {
-      console.log('sync error', err);
       this._syncStatus$.next('error');
     });
   }

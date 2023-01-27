@@ -85,7 +85,7 @@ export class FeedService {
 
   private generateFeedId(url: string): string {
     const hostname = new URL(url).hostname;
-    const hash = hashCode(url).toString(36);
+    const hash = Math.abs(hashCode(url)).toString(36);
     return `${FeedService.ID_PREFIX}${hostname}-${hash}`;
   }
 }

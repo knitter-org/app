@@ -13,9 +13,9 @@ export class EntryService {
   constructor(private databaseService: DatabaseService) {}
 
   async addEntries(
-    entries: { title: string; text: string; publishedAt: Date; url: string }[],
+    entries: Omit<EntryDoc, '_id' | 'type'>[],
     feedDoc: FeedDoc
-  ) {
+  ): Promise<string[]> {
     const docs = entries.map(entry => {
       const entryId = this.generateEntryId(feedDoc, entry.publishedAt, entry.url);
       const entryDoc: EntryDoc = {
@@ -29,7 +29,8 @@ export class EntryService {
       return entryDoc;
     });
 
-    await this.databaseService.db.bulkDocs(docs);
+    const results = await this.databaseService.db.bulkDocs(docs);
+    return results.map(result => result.id!);
   }
 
   async entriesForFeed(feedId: string): Promise<EntryDoc[]> {
@@ -56,14 +57,14 @@ export class EntryService {
   }
 
   getFeedIdForEntryId(entryId: string): string {
-    const feedPart = entryId.substring(entryId.indexOf(':') + 2 /** !!! SHOULD BE A 1 !!! */, entryId.indexOf('/'));
+    const feedPart = entryId.substring(entryId.indexOf(':') + 1, entryId.indexOf('/'));
     return `${FeedService.ID_PREFIX}${feedPart}`;
   }
 
   generateEntryId(feedDoc: FeedDoc, publishedAt: Date, url: string): string {
     const feedPart = feedDoc._id.substring(feedDoc._id.indexOf(':') + 1);
     const datePart = publishedAt.toISOString().substring(0, 19);
-    const hash = hashCode(url).toString(36);
+    const hash = Math.abs(hashCode(url)).toString(36);
     return `${EntryService.ID_PREFIX}${feedPart}/${datePart}-${hash}`;
   }
 }
