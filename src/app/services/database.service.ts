@@ -10,7 +10,6 @@ export type SyncStatus = 'disabled' | 'disconnected' | 'connected' | 'error';
   providedIn: 'root'
 })
 export class DatabaseService {
-
   private syncHandler?: any;
 
   public db: PouchDB.Database;
@@ -39,10 +38,7 @@ export class DatabaseService {
   }
 
   startServerSync(serverUrl: string) {
-    if (this.syncHandler) {
-      this.syncHandler.cancel();
-      this._syncStatus$.next('disabled');
-    }
+    this.stopServerSync();
 
     this.syncHandler = this.db.sync(serverUrl, {
       live: true,
@@ -54,6 +50,14 @@ export class DatabaseService {
     }).on('error', (err: any) => {
       this._syncStatus$.next('error');
     });
+  }
+
+  stopServerSync() {
+    if (this.syncHandler) {
+      this.syncHandler.cancel();
+      this.syncHandler = undefined;
+      this._syncStatus$.next('disabled');
+    }
   }
 
   async dropDatabase() {
