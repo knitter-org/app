@@ -1,28 +1,29 @@
-import { NgModule } from '@angular/core';
+import { isDevMode, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { FeedReaderService } from 'app/services/feed-reader.service';
+import { ScheduledFeedFetcherService } from 'app/services/scheduled-feed-fetcher.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { InitializationComponent } from './pages/initialization/initialization.component';
-import { VerticalNavComponent } from './elements/vertical-nav/vertical-nav.component';
-import { SettingsComponent } from './pages/settings/settings.component';
-import { ChannelsViewComponent } from './pages/channels-view/channels-view.component';
-import { FeedsEditComponent } from './pages/feeds-edit/feeds-edit.component';
-import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-columns-layout.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
-import { FeedReaderService } from 'app/services/feed-reader.service';
-import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
 import { EntryFormatListItemComponent } from './elements/entry-format-list-item/entry-format-list-item.component';
 import { EntryListComponent } from './elements/entry-list/entry-list.component';
-import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
-import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
+import { VerticalNavComponent } from './elements/vertical-nav/vertical-nav.component';
+import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-columns-layout.component';
+import { ChannelsViewComponent } from './pages/channels-view/channels-view.component';
+import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
+import { FeedsEditComponent } from './pages/feeds-edit/feeds-edit.component';
+import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
+import { InitializationComponent } from './pages/initialization/initialization.component';
 import { MigrationComponent } from './pages/migration/migration.component';
-import { ScheduledFeedFetcherService } from 'app/services/scheduled-feed-fetcher.service';
-import { FeedBadgePipe } from './pipes/feed-badge.pipe';
 import { DeleteDatabaseComponent } from './pages/settings/delete-database/delete-database.component';
+import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
+import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
+import { SettingsComponent } from './pages/settings/settings.component';
+import { FeedBadgePipe } from './pipes/feed-badge.pipe';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,6 @@ import { DeleteDatabaseComponent } from './pages/settings/delete-database/delete
     ChannelsViewComponent,
     FeedsEditComponent,
     TwoColumnsLayoutComponent,
-    FeedsAddComponent,
     FeedsViewComponent,
     EntryFormatListItemComponent,
     EntryListComponent,
@@ -49,6 +49,8 @@ import { DeleteDatabaseComponent } from './pages/settings/delete-database/delete
     ReactiveFormsModule,
     NgbModule,
     FontAwesomeModule,
+    FeedsAddComponent,
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
   ],
   providers: [FeedReaderService],
   bootstrap: [AppComponent]

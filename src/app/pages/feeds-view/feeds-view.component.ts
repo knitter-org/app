@@ -37,6 +37,6 @@ export class FeedsViewComponent {
     this.feedId$.next(this.feedId$.value);
   }
   async editFeed() {
-    await this.router.navigate(['feeds', this.feedId$.value, 'edit']);
+    this.router.navigate(['feeds', this.feedId$.value, 'edit']);
   }
 }

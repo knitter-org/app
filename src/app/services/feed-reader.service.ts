@@ -3,14 +3,17 @@ import { extract } from '@extractus/feed-extractor'
 import { FeedProxySettingsDoc } from './database.models';
 import { DatabaseService } from './database.service';
 
-export interface FeedFetchResult {
+export interface FetchedEntry {
   title: string,
-  entries: {
-    title: string,
-    text: string,
-    publishedAt: Date,
-    url: string,
-  }[],
+  text: string,
+  publishedAt: Date,
+  url: string,
+}
+
+export interface FeedFetchResult {
+  fetchedAt: Date,
+  title: string,
+  entries: FetchedEntry[],
 }
 
 @Injectable({
@@ -25,14 +28,13 @@ export class FeedReaderService {
       const { proxyUrl }: FeedProxySettingsDoc = await this.databaseService.db.get('settings:feed-proxy');
       const base64Url = btoa(url);
       url = `${proxyUrl}/${base64Url}`;
-    } catch (e) {
-      console.log(e);
-    }
+    } catch {}
 
     return this.fetchFeedInternal(url);
   }
 
   private async fetchFeedInternal(url: string): Promise<FeedFetchResult> {
+    const fetchedAt = new Date();
     const result = await extract(url, undefined, { headers: [] });
 
     const entries = result.entries!.map(entry => ({
@@ -43,6 +45,7 @@ export class FeedReaderService {
     }));
 
     return {
+      fetchedAt,
       title: result.title || url,
       entries,
     };

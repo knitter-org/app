@@ -19,7 +19,8 @@ export interface FeedDoc extends Doc {
         lastSuccessfulAt: Date,
         intervalMinutes: number;
     },
-    retention: RetentionKeepForever | RetentionDeleteOlderThan
+    retention: RetentionKeepForever | RetentionDeleteOlderThan,
+    entries: FeedEntry[],
 }
 
 export interface RetentionKeepForever {
@@ -30,6 +31,14 @@ export interface RetentionDeleteOlderThan {
   thresholdHours: number;
 }
 
+export interface FeedEntry {
+  title: string,
+  text: string,
+  publishedAt: Date,
+  url: string,
+}
+
+/** @deprecated */
 export interface EntryDoc extends Doc {
     type: 'entry',
     title: string,
@@ -58,4 +67,3 @@ export interface FeedProxySettingsDoc extends Doc {
   _id: 'settings:feed-proxy',
   proxyUrl: string,
 }
-

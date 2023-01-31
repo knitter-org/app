@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { faWindows } from '@fortawesome/free-brands-svg-icons';
 import { DatabaseService } from 'app/services/database.service';
 
 @Component({
@@ -9,9 +10,10 @@ import { DatabaseService } from 'app/services/database.service';
 export class DeleteDatabaseComponent {
   constructor(private databaseService: DatabaseService) {}
 
-  deleteLocalDatabase() {
+  async deleteLocalDatabase() {
     if (confirm('Are you sure?')) {
-      this.databaseService.dropDatabase();
+      await this.databaseService.dropDatabase();
+      window.location.reload();
     }
   }
 }

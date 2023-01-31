@@ -7,23 +7,25 @@
   >
     <fa-icon [icon]="faNewspaper"></fa-icon> Timeline
   </a>
+
+  <hr />
 </nav>
 
-<hr />
+<ng-container *ngIf="feeds$ | async as feeds">
+  <nav *ngIf="feeds.length > 0" class="nav nav-pills flex-column mt-2 feeds">
+    <a
+      *ngFor="let feed of feeds"
+      [routerLink]="['/feeds', feed._id]"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+      class="nav-link"
+    >
+      <fa-icon [icon]="faRss"></fa-icon> {{ feed.title }}
+    </a>
 
-<nav class="nav nav-pills flex-column mt-2 feeds">
-  <a
-    *ngFor="let feedAndStatus of feedsAndStatus$ | async"
-    [routerLink]="['/feeds', feedAndStatus.feed._id]"
-    routerLinkActive="active"
-    ariaCurrentWhenActive="page"
-    class="nav-link"
-  >
-    <fa-icon [icon]="faRss"></fa-icon> {{ feedAndStatus.feed.title }}
-  </a>
-</nav>
-
-<hr />
+    <hr  />
+  </nav>
+</ng-container>
 
 <nav class="nav nav-pills flex-column mt-2 channels">
   <a

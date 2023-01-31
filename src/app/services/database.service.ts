@@ -43,11 +43,11 @@ export class DatabaseService {
     this.syncHandler = this.db.sync(serverUrl, {
       live: true,
       retry: true
-    }).on('change', (change: any) => {
+    }).on('change', (change) => {
       this._syncStatus$.next('connected');
-    }).on('paused', (info: any) => {
+    }).on('paused', (info) => {
       this._syncStatus$.next('disconnected');
-    }).on('error', (err: any) => {
+    }).on('error', (err) => {
       this._syncStatus$.next('error');
     });
   }

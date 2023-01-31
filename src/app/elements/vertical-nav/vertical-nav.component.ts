@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { faGear, faRss, faPlus, faNewspaper }  from '@fortawesome/free-solid-svg-icons';
-import { map } from 'rxjs';
+import {
+  faGear, faNewspaper, faPlus, faRss
+} from '@fortawesome/free-solid-svg-icons';
+import { FeedsStore } from 'app/state/feeds.store';
 import { VerticalNavStore } from './vertical-nav.store';
 
 @Component({
@@ -15,18 +17,15 @@ export class VerticalNavComponent implements OnInit {
   faPlus = faPlus;
   faNewspaper = faNewspaper;
 
-  readonly channels$ = this.store.state$.pipe(
-    map((state) => state.channels)
-  );
+  readonly feeds$ = this.feedsStore.feeds$;
 
-  readonly feedsAndStatus$ = this.store.state$.pipe(
-    map((state) => state.feedsAndStatus)
-  );
-
-  constructor(private store: VerticalNavStore) {}
+  constructor(
+    private feedsStore: FeedsStore,
+    private componentStore: VerticalNavStore
+  ) {}
 
   async ngOnInit() {
-    this.store.fetchChannels();
-    this.store.fetchFeeds();
+    this.componentStore.fetchChannels();
+    // this.componentStore.fetchFeeds();
   }
 }

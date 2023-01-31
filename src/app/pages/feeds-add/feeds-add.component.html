@@ -1,30 +1,40 @@
 <h3>Add Feed</h3>
 
-<form [formGroup]="form">
+<form *ngIf="(state$ | async) as state" [formGroup]="form" class="my-3 d-block">
   <div class="form-floating mb-3">
     <input
       formControlName="url"
-      [class.is-invalid]="form.errors"
+      [class.is-invalid]="form.errors || state?.error"
       id="url"
       type="text"
       placeholder="https://example.com/rss"
       class="form-control"
     />
     <label for="url">Feed URL</label>
-    <div *ngIf="form.errors?.['invalidFeed']" class="invalid-feedback">
-      No valid feed found. Please try a different URL pointing to a RSS or ATOM
-      feed.
+    <div *ngIf="state?.error" class="invalid-feedback">
+      {{ state.error }}
     </div>
   </div>
 
   <div class="d-flex justify-content-end">
     <button
       type="button"
-      [disabled]="!form.valid"
+      [disabled]="!form.valid || state?.status === 'FETCH_ACTIVE'"
       (click)="addFeed()"
       class="btn btn-primary"
     >
+      <div
+        *ngIf="state?.status === 'FETCH_ACTIVE'"
+        class="spinner-border spinner-border-sm"
+        role="status"
+      >
+        <span class="visually-hidden">Loading...</span>
+      </div>
       Add
     </button>
   </div>
+
+  <p *ngIf="state.status === 'CREATED'">
+    Feed created successfully!
+  </p>
 </form>

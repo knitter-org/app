@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
 import { FeedDoc } from 'app/services/database.models';
-import { FeedService } from 'app/services/feed.service';
+import { FeedsStore } from 'app/state/feeds.store';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -13,7 +13,6 @@ import { FeedService } from 'app/services/feed.service';
   styleUrls: ['./feeds-edit.component.less'],
 })
 export class FeedsEditComponent {
-  readonly feedId$ = new BehaviorSubject<string | undefined>(undefined);
   readonly feed$ = new BehaviorSubject<FeedDoc | undefined>(undefined);
 
   form = new FormGroup({
@@ -24,20 +23,12 @@ export class FeedsEditComponent {
 
   constructor(
     route: ActivatedRoute,
-    private router: Router,
-    private feedService: FeedService
+    private feedsStore: FeedsStore
   ) {
     route.params
       .pipe(
         untilDestroyed(this),
-        map((params) => params['id'])
-      )
-      .subscribe(this.feedId$);
-
-    this.feedId$
-      .pipe(
-        untilDestroyed(this),
-        mergeMap((feedId) => this.feedService.getFeed(feedId!))
+        switchMap((params) => this.feedsStore.feedById$(params['id']))
       )
       .subscribe(this.feed$);
 
@@ -51,7 +42,7 @@ export class FeedsEditComponent {
   }
 
   async saveFeed() {
-    await this.feedService.saveFeed({
+    const feedDoc = {
       ...this.feed$.value!,
       title: this.form.controls.title.value!.trim(),
       badge: this.form.controls.badge.value!.trim(),
@@ -59,7 +50,7 @@ export class FeedsEditComponent {
         ...this.feed$.value?.fetch!,
         intervalMinutes: +this.form.controls.fetchIntervalMinutes.value!.trim(),
       },
-    });
-    this.router.navigate(['feeds', this.feedId$.value]);
+    };
+    await this.feedsStore.updateFeed(feedDoc);
   }
 }

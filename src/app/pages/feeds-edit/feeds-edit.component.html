@@ -46,7 +46,7 @@
   <div class="d-flex justify-content-end">
     <button
       type="button"
-      [disabled]="!form.valid"
+      [disabled]="form.pristine || !form.valid"
       (click)="saveFeed()"
       class="btn btn-primary"
     >

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FeedDoc } from './database.models';
 import { DatabaseService } from './database.service';
 import { EntryService } from './entry.service';
-import { FeedReaderService } from './feed-reader.service';
+import { FeedReaderService, FetchedEntry } from './feed-reader.service';
 import { hashCode } from 'app/utils/string';
 
 @Injectable({
@@ -17,34 +17,32 @@ export class FeedService {
     private entryService: EntryService
   ) { }
 
-  async addFeed(url: string): Promise<string> {
-    const fetchedAt = new Date();
-    const fetchResult = await this.feedReaderService.fetchFeed(url);
+  async addFeed(title: string, url: string, fetchedAt: Date, entries: FetchedEntry[]): Promise<FeedDoc> {
     const feedId = this.generateFeedId(url);
 
     const feedDoc: FeedDoc = {
       _id: feedId,
       type: 'feed',
-      title: fetchResult.title,
-      url: url,
+      title,
+      url,
       fetch: {
         lastSuccessfulAt: fetchedAt,
         intervalMinutes: 5,
       },
       retention: { strategy: 'keep-forever' },
+      entries
     };
 
     await this.saveFeed(feedDoc);
-    await this.entryService.addEntries(fetchResult.entries, feedDoc);
-
-    return feedId;
+    return await this.getFeed(feedId);
   }
 
-  async saveFeed(feedDoc: FeedDoc): Promise<void> {
+  async saveFeed(feedDoc: FeedDoc): Promise<FeedDoc> {
     if (!feedDoc.badge || feedDoc.badge.trim() === '') {
       feedDoc.badge = undefined;
     }
-    await this.databaseService.put(feedDoc);
+    const response = await this.databaseService.put(feedDoc);
+    return await this.getFeed(response.id);
   }
 
   async fetchEntries(feedId: string) {

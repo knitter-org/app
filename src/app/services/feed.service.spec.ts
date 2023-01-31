@@ -24,11 +24,11 @@ describe('FeedService', () => {
         entries: [],
       }))
 
-      let feedId = await spectator.service.addFeed('https://example.com/feed?format=rss');
-      expect(feedId).toEqual('feed:example.com-pb3n7w');
+      let feedDoc = await spectator.service.addFeed('title', 'https://example.com/feed?format=rss', new Date(), []);
+      expect(feedDoc._id).toEqual('feed:example.com-pb3n7w');
 
-      feedId = await spectator.service.addFeed('https://example.com/1');
-      expect(feedId).toEqual('feed:example.com-se6llc');
+      feedDoc = await spectator.service.addFeed('title', 'https://example.com/1', new Date(), []);
+      expect(feedDoc._id).toEqual('feed:example.com-se6llc');
     });
   });
 

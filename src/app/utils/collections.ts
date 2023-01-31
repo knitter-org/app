@@ -1,11 +1,8 @@
 import { Doc } from "app/services/database.models";
+import { Map } from 'immutable';
 
 export function docsToIdMap<T extends Doc>(docs: T[]): Map<string, T> {
-  const map = new Map();
-  docs.forEach((doc) => {
-    map.set(doc._id, doc);
-  });
-  return map;
+  return Map(docs.map((doc) => [doc._id, doc]));
 }
 
 export function replaceElement<T>(arr: T[], victim: T, successor: T): T[] {
