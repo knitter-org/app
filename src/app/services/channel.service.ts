@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ChannelDoc, ChannelOrderDoc, EntryDoc } from './database.models';
+import { ChannelDoc, ChannelOrderDoc, Entry, FeedDoc } from './database.models';
 import { DatabaseService } from './database.service';
 
 @Injectable({
@@ -13,14 +13,13 @@ export class ChannelService {
     private databaseService: DatabaseService
   ) {}
 
-  async unreadEntiresOrderedByDate(): Promise<EntryDoc[]> {
+  async unreadEntiresOrderedByDate(_channelId: string): Promise<Entry[]> {
     const result = await this.databaseService.db.query(this.dbUnreadEntryMapFunc, {
       descending: true,
-      include_docs: true,
       limit: 20,
     });
 
-    return result.rows.map((row: any) => row.doc);
+    return result.rows.map((row) => row.value);
   }
 
   async getChannel(channelId: string): Promise<ChannelDoc> {
@@ -36,9 +35,13 @@ export class ChannelService {
     return allDocs.rows.map(row => row.doc! as unknown as ChannelDoc);
   }
 
-  private dbUnreadEntryMapFunc = (doc: EntryDoc) => {
-    if (doc.type === 'entry' && !doc.readAt) {
-      emit(doc.publishedAt);
+  private dbUnreadEntryMapFunc = (doc: FeedDoc) => {
+    if (doc.type === 'feed') {
+      for (let entry of doc.entries) {
+        if (!entry.readAt) {
+          emit([entry.publishedAt, entry.id], entry);
+        }
+      }
     }
   };
 }

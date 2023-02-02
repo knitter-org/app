@@ -3,8 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowsRotate, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
-import { EntryDoc, FeedDoc } from 'app/services/database.models';
-import { EntryService } from 'app/services/entry.service';
+import { FeedDoc, Entry } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
 
 @UntilDestroy()
@@ -19,17 +18,16 @@ export class FeedsViewComponent {
 
   feedId$ = new BehaviorSubject<string|undefined>(undefined);
   feed$: Observable<FeedDoc>;
-  entries$: Observable<EntryDoc[]>;
+  entries$: Observable<Entry[]>;
 
   constructor(
     route: ActivatedRoute,
     private router: Router,
-    private feedService: FeedService,
-    private entryService: EntryService
+    private feedService: FeedService
   ) {
     route.params.pipe(untilDestroyed(this), map(params => params['id'])).subscribe(this.feedId$);
     this.feed$ = this.feedId$.pipe(mergeMap(feedId => this.feedService.getFeed(feedId!)));
-    this.entries$ = this.feedId$.pipe(mergeMap(feedId => this.entryService.entriesForFeed(feedId!)));
+    this.entries$ = this.feed$.pipe(map(feed => feed.entries));
   }
 
   async forceFetch() {

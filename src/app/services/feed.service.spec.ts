@@ -1,6 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { DatabaseService } from './database.service';
-import { EntryService } from './entry.service';
 import { FeedReaderService } from './feed-reader.service';
 
 import { FeedService } from './feed.service';
@@ -9,7 +8,7 @@ describe('FeedService', () => {
   let spectator: SpectatorService<FeedService>;
   const createService = createServiceFactory({
     service: FeedService,
-    providers: [DatabaseService, EntryService],
+    providers: [DatabaseService],
     mocks: [FeedReaderService],
   });
 
@@ -43,17 +42,34 @@ describe('FeedService', () => {
         title: 'test-feed',
         url: 'http://example.com',
         fetch: {
-          lastSuccessfulAt: new Date('2020-10-10'),
+          lastSuccessfulAt: new Date('2002-01-30'),
           intervalMinutes: 5,
         },
         retention: { strategy: 'keep-forever' },
+        entries: [],
       }));
     });
 
-    it('should not store new entries when nothing was returned by the feed reader', async () => {
-      const entryService = spectator.inject(EntryService);
-      spyOn(entryService, 'addEntries');
+    it('should not add new entries only', async () => {
+      const feedReaderServiceSpy = spectator.inject(FeedReaderService);
+      feedReaderServiceSpy.fetchFeed.and.returnValue(Promise.resolve({
+        title: 'test-mock-feed',
+        entries: [
+          { title: 't1', text: 'txt1', publishedAt: new Date('2001-01-01'), url: 'u1' },
+          { title: 't2', text: 'txt2', publishedAt: new Date('2002-02-02'), url: 'u2' },
+          { title: 't3', text: 'txt3', publishedAt: new Date('2003-03-02'), url: 'u3' },
+        ]
+      }));
 
+      const feedService = spectator.inject(FeedService);
+      await feedService.fetchEntries(feedId);
+
+      const feedDoc = await feedService.getFeed(feedId);
+      expect(feedDoc.entries).toHaveSize(2);
+      expect(new Date().getTime() - feedDoc.fetch.lastSuccessfulAt.getTime()).toBeLessThan(1000);
+    });
+
+    it('should update lastSuccessfulAt timestamp also if no entries were added', async () => {
       const feedReaderServiceSpy = spectator.inject(FeedReaderService);
       feedReaderServiceSpy.fetchFeed.and.returnValue(Promise.resolve({
         title: 'test-mock-feed',
@@ -62,7 +78,10 @@ describe('FeedService', () => {
 
       const feedService = spectator.inject(FeedService);
       await feedService.fetchEntries(feedId);
-      expect(entryService.addEntries).not.toHaveBeenCalled();
+
+      const feedDoc = await feedService.getFeed(feedId);
+      expect(feedDoc.entries).toHaveSize(0);
+      expect(new Date().getTime() - feedDoc.fetch.lastSuccessfulAt.getTime()).toBeLessThan(1000);
     });
   });
 });

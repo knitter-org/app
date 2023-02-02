@@ -20,7 +20,7 @@ export interface FeedDoc extends Doc {
         intervalMinutes: number;
     },
     retention: RetentionKeepForever | RetentionDeleteOlderThan,
-    entries: FeedEntry[],
+    entries: Entry[],
 }
 
 export interface RetentionKeepForever {
@@ -31,21 +31,13 @@ export interface RetentionDeleteOlderThan {
   thresholdHours: number;
 }
 
-export interface FeedEntry {
+export interface Entry {
+  id: string,
   title: string,
   text: string,
   publishedAt: Date,
+  readAt?: Date,
   url: string,
-}
-
-/** @deprecated */
-export interface EntryDoc extends Doc {
-    type: 'entry',
-    title: string,
-    text: string,
-    url: string,
-    publishedAt: Date,
-    readAt?: Date,
 }
 
 export interface ChannelOrderDoc extends Doc {

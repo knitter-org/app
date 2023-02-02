@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EntryDoc } from 'app/services/database.models';
+import { Entry } from 'app/services/database.models';
 
 @Component({
   selector: 'app-entry-list',
@@ -9,8 +9,8 @@ import { EntryDoc } from 'app/services/database.models';
 })
 export class EntryListComponent {
 
-  @Input() entries$?: Observable<EntryDoc[]>;
+  @Input() entries$?: Observable<Entry[]>;
 
-  @Output() onRead = new EventEmitter<EntryDoc>();
+  @Output() onRead = new EventEmitter<Entry>();
 
 }

@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { concatMap, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ChannelService } from 'app/services/channel.service';
-import { ChannelDoc, EntryDoc } from 'app/services/database.models';
-import { EntryService } from 'app/services/entry.service';
-import { replaceElement } from 'app/utils/collections';
+import { ChannelDoc, Entry } from 'app/services/database.models';
+import { forkJoin, Observable, switchMap, tap } from 'rxjs';
 
 export interface ChannelViewState {
   channel?: ChannelDoc;
-  entries?: EntryDoc[];
+  entries?: Entry[];
   isLoading: boolean;
 }
 
 @Injectable()
 export class ChannelViewStore extends ComponentStore<ChannelViewState> {
   constructor(
-    private channelService: ChannelService,
-    private entryService: EntryService
+    private channelService: ChannelService
   ) {
     super({ isLoading: false });
   }
@@ -29,7 +26,9 @@ export class ChannelViewStore extends ComponentStore<ChannelViewState> {
           channel: this.channelService.getChannel(
             ChannelService.ID_PREFIX + channelId
           ),
-          entries: this.channelService.unreadEntiresOrderedByDate(),
+          entries: this.channelService.unreadEntiresOrderedByDate(
+            ChannelService.ID_PREFIX + channelId
+          ),
         })
       ),
       tapResponse(
@@ -45,23 +44,23 @@ export class ChannelViewStore extends ComponentStore<ChannelViewState> {
     )
   );
 
-  readonly markEntryAsRead = this.effect((entry$: Observable<EntryDoc>) =>
-    entry$.pipe(
-      concatMap((entry) =>
-        forkJoin({
-          oldEntry: of(entry),
-          updatedEntry: this.entryService.markEntryAsRead(entry),
-          entries: this.select((state) => state.entries).pipe(take(1)),
-        })
-      ),
-      tapResponse(
-        ({oldEntry, updatedEntry, entries}) =>
-          this.patchState({
-            entries: replaceElement(entries!, oldEntry, updatedEntry),
-          }),
-        (error) =>
-          console.log('ChannelViewStore updateForChannelId error:', error)
-      )
-    )
-  );
+  // readonly markEntryAsRead = this.effect((entry$: Observable<FeedEntry>) =>
+  //   entry$.pipe(
+  //     concatMap((entry) =>
+  //       forkJoin({
+  //         oldEntry: of(entry),
+  //         updatedEntry: this.entryService.markEntryAsRead(entry),
+  //         entries: this.select((state) => state.entries).pipe(take(1)),
+  //       })
+  //     ),
+  //     tapResponse(
+  //       ({oldEntry, updatedEntry, entries}) =>
+  //         this.patchState({
+  //           entries: replaceElement(entries!, oldEntry, updatedEntry),
+  //         }),
+  //       (error) =>
+  //         console.log('ChannelViewStore updateForChannelId error:', error)
+  //     )
+  //   )
+  // );
 }

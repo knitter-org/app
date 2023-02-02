@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { EntryDoc } from 'app/services/database.models';
-import { EntryService } from 'app/services/entry.service';
+import { Entry } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
 
 @Pipe({
@@ -8,13 +7,13 @@ import { FeedService } from 'app/services/feed.service';
 })
 export class FeedBadgePipe implements PipeTransform {
   constructor(
-    private entryService: EntryService,
     private feedService: FeedService
   ) {}
 
-  async transform(entryDoc: EntryDoc): Promise<string> {
-    const feedId = this.entryService.getFeedIdForEntryId(entryDoc._id);
-    const feed = await this.feedService.getFeed(feedId);
-    return feed.badge ?? feed.title;
+  async transform(entry: Entry): Promise<string> {
+    return Promise.resolve('not implemented');
+    // const feedId = this.entryService.getFeedIdForEntryId(entry._id);
+    // const feed = await this.feedService.getFeed(feedId);
+    // return feed.badge ?? feed.title;
   }
 }
