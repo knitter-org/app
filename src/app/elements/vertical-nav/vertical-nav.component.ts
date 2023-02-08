@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   faGear, faNewspaper, faPlus, faRss
 } from '@fortawesome/free-solid-svg-icons';
+import { FeedService } from 'app/services/feed.service';
 import { FeedsStore } from 'app/state/feeds.store';
 import { VerticalNavStore } from './vertical-nav.store';
 
@@ -17,15 +18,20 @@ export class VerticalNavComponent implements OnInit {
   faPlus = faPlus;
   faNewspaper = faNewspaper;
 
-  readonly feeds$ = this.feedsStore.feeds$;
+  readonly feedsVm$ = this.componentStore.feedsVm$;
 
   constructor(
     private feedsStore: FeedsStore,
-    private componentStore: VerticalNavStore
+    private componentStore: VerticalNavStore,
+    private feedService: FeedService
   ) {}
 
   async ngOnInit() {
     this.componentStore.fetchChannels();
-    // this.componentStore.fetchFeeds();
+  }
+
+  async getUnreadEntryCountForFeedId(feedId: string) {
+    return 0;
+    // return await this.feedService.getUnreadEntryCountForFeedId(feedId);
   }
 }

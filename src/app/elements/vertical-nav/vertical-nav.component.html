@@ -11,19 +11,22 @@
   <hr />
 </nav>
 
-<ng-container *ngIf="feeds$ | async as feeds">
-  <nav *ngIf="feeds.length > 0" class="nav nav-pills flex-column mt-2 feeds">
+<ng-container *ngIf="feedsVm$ | async as feedVms">
+  <nav *ngIf="feedVms.length > 0" class="nav nav-pills flex-column mt-2 feeds">
     <a
-      *ngFor="let feed of feeds"
-      [routerLink]="['/feeds', feed._id]"
+      *ngFor="let feedVm of feedVms"
+      [routerLink]="['/feeds', feedVm._id]"
       routerLinkActive="active"
       ariaCurrentWhenActive="page"
       class="nav-link"
     >
-      <fa-icon [icon]="faRss"></fa-icon> {{ feed.title }}
+      <fa-icon [icon]="faRss"></fa-icon> {{ feedVm.title }}
+      <span class="badge rounded-pill text-bg-light">{{
+        feedVm.unreadEntriesCount
+      }}</span>
     </a>
 
-    <hr  />
+    <hr />
   </nav>
 </ng-container>
 

@@ -1,10 +1,13 @@
-import { rangeInclusive } from './range';
+import { rangeEndInclusive } from './range';
 
-describe('range', () => {
-  it('should return an array with the range number values', () => {
-    expect(rangeInclusive(0, 3)).toEqual([0, 1, 2]);
+describe('rangeEndInclusive', () => {
+  it('should return an array with the range number values and inclusive the end', () => {
+    expect(rangeEndInclusive(0, 3)).toEqual([1, 2, 3]);
+  });
+  it('should return an array with the range number values and inclusive the end', () => {
+    expect(rangeEndInclusive(4, 5)).toEqual([5]);
   });
   it('should return an empty array on equal numbers', () => {
-    expect(rangeInclusive(3, 3)).toEqual([]);
+    expect(rangeEndInclusive(3, 3)).toEqual([]);
   });
 });

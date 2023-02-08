@@ -1,33 +1,49 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { Observable, switchMap, tap } from 'rxjs';
 import { ChannelService } from 'app/services/channel.service';
-import { ChannelDoc, FeedDoc } from 'app/services/database.models';
+import { ChannelDoc } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
+import { FeedsStore } from 'app/state/feeds.store';
+import { map, Observable, switchMap, tap, forkJoin } from 'rxjs';
 
-export interface FeedStatus {
-  unreadEntriesCount?: number;
-  isLoading: boolean;
+export interface FeedViewModel {
+  _id: string;
+  title: string;
+  unreadEntriesCount: number;
 }
 
 export interface State {
   channels: ChannelDoc[];
+  feedIdToUnreadEntryCount: Map<string, number>;
   isChannelsLoading: boolean;
-  feedsAndStatus: { feed: FeedDoc; status: FeedStatus }[];
-  isFeedsLoading: boolean;
 }
 
 @Injectable()
 export class VerticalNavStore extends ComponentStore<State> {
+  feedsVm$: Observable<FeedViewModel[]> = this.feedStore.feeds$.pipe(
+    map((feeds) =>
+      feeds.map((feedDoc) => ({ _id: feedDoc._id, title: feedDoc.title }))
+    ),
+    switchMap((feedVms) =>
+      forkJoin(
+        feedVms.map((feedVm) =>
+          this.feedService
+            .getUnreadEntryCountForFeedId(feedVm._id)
+            .then((unreadEntriesCount) => ({ ...feedVm, unreadEntriesCount }))
+        )
+      )
+    ),
+  );
+
   constructor(
     private channelService: ChannelService,
-    private feedService: FeedService
+    private feedService: FeedService,
+    private feedStore: FeedsStore
   ) {
     super({
       channels: [],
-      feedsAndStatus: [],
+      feedIdToUnreadEntryCount: new Map(),
       isChannelsLoading: false,
-      isFeedsLoading: false,
     });
   }
 
@@ -45,26 +61,4 @@ export class VerticalNavStore extends ComponentStore<State> {
       )
     )
   );
-
-  readonly fetchFeeds = this.effect((trigger$: Observable<void>) =>
-    trigger$.pipe(
-      tap((_) => this.patchState({ isFeedsLoading: true })),
-      switchMap((_) => this.feedService.getFeeds()),
-      tapResponse(
-        (feeds) =>
-          this.patchState({
-            feedsAndStatus: this.mapFeedsToFeedsAndStatus(feeds),
-            isFeedsLoading: false,
-          }),
-        (error) => console.log('ChannelViewStore error:', error)
-      )
-    )
-  );
-
-  mapFeedsToFeedsAndStatus(feeds: FeedDoc[]): { feed: FeedDoc; status: FeedStatus; }[] {
-    return feeds.map(feed => ({
-      feed,
-      status: { isLoading: false },
-    }))
-  }
 }

@@ -5,7 +5,7 @@ import { DatabaseService } from './database.service';
 import { FeedReaderService, FetchedEntry } from './feed-reader.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeedService {
   static ID_PREFIX = 'feed:';
@@ -13,9 +13,14 @@ export class FeedService {
   constructor(
     private feedReaderService: FeedReaderService,
     private databaseService: DatabaseService
-  ) { }
+  ) {}
 
-  async addFeed(title: string, url: string, fetchedAt: Date, entries: FetchedEntry[]): Promise<FeedDoc> {
+  async addFeed(
+    title: string,
+    url: string,
+    fetchedAt: Date,
+    entries: FetchedEntry[]
+  ): Promise<FeedDoc> {
     const feedId = this.generateFeedId(url);
 
     const feedDoc: FeedDoc = {
@@ -28,7 +33,7 @@ export class FeedService {
         intervalMinutes: 5,
       },
       retention: { strategy: 'keep-forever' },
-      entries: entries.map(fetchedEntry => this.mapToEntry(fetchedEntry)),
+      entries: entries.map((fetchedEntry) => this.mapToEntry(fetchedEntry)),
     };
 
     await this.saveFeed(feedDoc);
@@ -52,13 +57,17 @@ export class FeedService {
     const fetchResult = await this.feedReaderService.fetchFeed(feedDoc.url);
 
     const newEntries = fetchResult.entries
-      .filter(entry => entry.publishedAt > feedDoc.fetch.lastSuccessfulAt)
-      .map(fetchedEntry => this.mapToEntry(fetchedEntry));
+      .filter((entry) => entry.publishedAt > feedDoc.fetch.lastSuccessfulAt)
+      .map((fetchedEntry) => this.mapToEntry(fetchedEntry));
     if (newEntries.length > 0) {
       feedDoc.entries = [...newEntries, ...feedDoc.entries];
-      console.log(`Fetch finished for ${feedDoc._id} (${feedDoc.title}): ${newEntries.length} new entries since ${feedDoc.fetch.lastSuccessfulAt}`);
+      console.log(
+        `Fetch finished for ${feedDoc._id} (${feedDoc.title}): ${newEntries.length} new entries since ${feedDoc.fetch.lastSuccessfulAt}`
+      );
     } else {
-      console.log(`Fetch finished for ${feedDoc._id} (${feedDoc.title}): No updates since ${feedDoc.fetch.lastSuccessfulAt}`);
+      console.log(
+        `Fetch finished for ${feedDoc._id} (${feedDoc.title}): No updates since ${feedDoc.fetch.lastSuccessfulAt}`
+      );
     }
 
     feedDoc.fetch.lastSuccessfulAt = fetchedAt;
@@ -77,6 +86,31 @@ export class FeedService {
   async getFeed(feedId: string): Promise<FeedDoc> {
     const feed: FeedDoc = await this.databaseService.db.get(feedId);
     return this.mapToFeedDoc(feed);
+  }
+
+  async getUnreadEntryCountForFeedId(feedId: string): Promise<number> {
+    const response = await this.databaseService.db.query(
+      'entries/unreadEntries',
+      {
+        startkey: feedId,
+        limit: 1,
+      }
+    );
+    return response.rows[0].value;
+  }
+
+  async getFeedTitleAndBadgeByEntry(
+    entry: Entry
+  ): Promise<{ title: string; badge?: string }> {
+    const response = await this.databaseService.db.query(
+      'entries/entryIdToFeedInfo',
+      {
+        startkey: entry.id,
+        limit: 1,
+      }
+    );
+    const [title, badge] = response.rows[0].value;
+    return { title, badge };
   }
 
   private mapToFeedDoc(doc: any): FeedDoc {
@@ -112,6 +146,8 @@ export class FeedService {
   }
 
   private updateFeedEntryOrder(feedDoc: FeedDoc) {
-    feedDoc.entries.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+    feedDoc.entries.sort(
+      (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()
+    );
   }
 }

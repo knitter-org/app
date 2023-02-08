@@ -12,9 +12,7 @@ export interface ChannelViewState {
 
 @Injectable()
 export class ChannelViewStore extends ComponentStore<ChannelViewState> {
-  constructor(
-    private channelService: ChannelService
-  ) {
+  constructor(private channelService: ChannelService) {
     super({ isLoading: false });
   }
 
@@ -26,9 +24,7 @@ export class ChannelViewStore extends ComponentStore<ChannelViewState> {
           channel: this.channelService.getChannel(
             ChannelService.ID_PREFIX + channelId
           ),
-          entries: this.channelService.unreadEntiresOrderedByDate(
-            ChannelService.ID_PREFIX + channelId
-          ),
+          entries: this.channelService.unreadEntiresOrderedByDate(channelId),
         })
       ),
       tapResponse(

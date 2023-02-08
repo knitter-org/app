@@ -13,8 +13,8 @@ export class ChannelService {
     private databaseService: DatabaseService
   ) {}
 
-  async unreadEntiresOrderedByDate(_channelId: string): Promise<Entry[]> {
-    const result = await this.databaseService.db.query(this.dbUnreadEntryMapFunc, {
+  async unreadEntiresOrderedByDate(channelId: string): Promise<Entry[]> {
+    const result = await this.databaseService.db.query('channel-entries/' + channelId, {
       descending: true,
       limit: 20,
     });
@@ -34,17 +34,4 @@ export class ChannelService {
     });
     return allDocs.rows.map(row => row.doc! as unknown as ChannelDoc);
   }
-
-  private dbUnreadEntryMapFunc = (doc: FeedDoc) => {
-    if (doc.type === 'feed') {
-      for (let entry of doc.entries) {
-        if (!entry.readAt) {
-          emit([entry.publishedAt, entry.id], entry);
-        }
-      }
-    }
-  };
 }
-
-// Pouchdb emit method
-declare var emit: any;

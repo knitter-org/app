@@ -30,7 +30,7 @@ export class MigrationComponent implements OnInit {
     await this.migrationService.migrate();
 
     // Reload the entire page/application
-    // window.location.reload();
+    window.location.reload();
   }
 
   private redirectToRootIfSchemaVersionUpToDate() {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { concatAll, filter, interval, switchMap } from 'rxjs';
+import { MigrationService } from 'app/pages/migration/migration.service';
+import { concatAll, filter, interval, switchMap, tap } from 'rxjs';
 import { FeedDoc } from './database.models';
 import { FeedService } from './feed.service';
 
@@ -10,12 +11,14 @@ const SCHEULDER_INTERVAL_SECONDS = 60;
 })
 export class ScheduledFeedFetcherService {
 
-  constructor(private feedService: FeedService) {
+  constructor(private feedService: FeedService, private migrationService: MigrationService) {
     this.setupScheduler();
   }
 
   private setupScheduler() {
     interval(SCHEULDER_INTERVAL_SECONDS * 1000).pipe(
+      switchMap(() => this.migrationService.needsMigration()),
+      filter(needsMigration => !needsMigration),
       switchMap(_ => this.feedService.getFeeds()),
       concatAll(),
       filter(feedDoc => this.isFetchDue(feedDoc)),
