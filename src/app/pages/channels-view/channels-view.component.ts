@@ -18,7 +18,7 @@ export class ChannelsViewComponent {
   );
 
   readonly entries$ = this.channelViewStore.state$.pipe(
-    map((state) => state.entries || [])
+    map((state) => state.entries?.toArray() || [])
   );
 
   readonly isLoading$ = this.channelViewStore.state$.pipe(
@@ -36,7 +36,6 @@ export class ChannelsViewComponent {
   }
 
   onEntryRead(entry: Entry) {
-    console.log('TODO implement entry read', entry);
-    // this.channelViewStore.markEntryAsRead(entryDoc);
+    this.channelViewStore.onEntryRead(entry);
   }
 }

@@ -10,4 +10,4 @@
   </button>
 </div>
 
-<app-entry-list [entries$]="entries$"></app-entry-list>
+<app-entry-list [entries$]="entries$" (onRead)="onEntryRead($event)"></app-entry-list>

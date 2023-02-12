@@ -4,6 +4,7 @@ import { FeedService } from 'app/services/feed.service';
 
 @Pipe({
   name: 'feedBadge',
+  standalone: true,
 })
 export class FeedBadgePipe implements PipeTransform {
   constructor(private feedService: FeedService) {}

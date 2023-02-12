@@ -1,8 +1,29 @@
 <ul class="list-group">
-  <app-entry-format-list-item
+  <ng-container
     *ngFor="let entry of entries$ | async"
-    [entry]="entry"
-    (onRead)="onRead.emit(entry)"
-  >
-  </app-entry-format-list-item>
+    [ngTemplateOutlet]="listItem"
+    [ngTemplateOutletContext]="{ $implicit: entry }"
+  ></ng-container>
 </ul>
+
+<ng-template #listItem let-entry>
+  <a
+    (click)="onEntryClick(entry)"
+    [href]="entry.url"
+    target="_blank"
+    class="list-group-item list-group-item-action"
+    [class.text-secondary]="!!entry.readAt"
+  >
+    <div class="d-flex w-100 justify-content-between">
+      <small>{{ entry.publishedAt | date }}</small>
+      <span
+        class="badge"
+        [class.text-bg-dark]="!entry.readAt"
+        [class.text-bg-secondary]="!!entry.readAt"
+        >{{ entry | feedBadge | async }}</span
+      >
+    </div>
+    <h5 class="my-1">{{ entry.title }}</h5>
+    <small>{{ entry.text }}</small>
+  </a>
+</ng-template>

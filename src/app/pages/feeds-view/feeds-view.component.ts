@@ -37,4 +37,9 @@ export class FeedsViewComponent {
   async editFeed() {
     this.router.navigate(['feeds', this.feedId$.value, 'edit']);
   }
+
+  onEntryRead(entry: Entry) {
+    console.log('TODO implement entry read', entry);
+    // this.channelViewStore.markEntryAsRead(entryDoc);
+  }
 }

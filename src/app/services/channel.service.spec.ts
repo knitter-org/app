@@ -4,7 +4,6 @@ import { MigrationService } from 'app/pages/migration/migration.service';
 import { produceEntry } from 'test/entry.factory';
 
 import { ChannelService } from './channel.service';
-import { Entry } from './database.models';
 import { DatabaseService } from './database.service';
 import { FeedService } from './feed.service';
 

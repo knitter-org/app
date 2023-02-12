@@ -8,7 +8,6 @@ import { FeedReaderService } from 'app/services/feed-reader.service';
 import { ScheduledFeedFetcherService } from 'app/services/scheduled-feed-fetcher.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { EntryFormatListItemComponent } from './elements/entry-format-list-item/entry-format-list-item.component';
 import { EntryListComponent } from './elements/entry-list/entry-list.component';
 import { VerticalNavComponent } from './elements/vertical-nav/vertical-nav.component';
 import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-columns-layout.component';
@@ -22,7 +21,6 @@ import { DeleteDatabaseComponent } from './pages/settings/delete-database/delete
 import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
 import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
 import { SettingsComponent } from './pages/settings/settings.component';
-import { FeedBadgePipe } from './pipes/feed-badge.pipe';
 
 @NgModule({
   declarations: [
@@ -34,12 +32,9 @@ import { FeedBadgePipe } from './pipes/feed-badge.pipe';
     FeedsEditComponent,
     TwoColumnsLayoutComponent,
     FeedsViewComponent,
-    EntryFormatListItemComponent,
-    EntryListComponent,
     ServerSettingsComponent,
     FeedProxySettingsComponent,
     MigrationComponent,
-    FeedBadgePipe,
     DeleteDatabaseComponent,
   ],
   imports: [
@@ -49,6 +44,7 @@ import { FeedBadgePipe } from './pipes/feed-badge.pipe';
     NgbModule,
     FontAwesomeModule,
     FeedsAddComponent,
+    EntryListComponent,
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
   ],
   providers: [FeedReaderService],

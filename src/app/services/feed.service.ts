@@ -74,6 +74,29 @@ export class FeedService {
     return await this.saveFeed(feedDoc);
   }
 
+  async updateEntry(entryId: string, props: Partial<Entry>): Promise<Entry | undefined> {
+    const response = await this.databaseService.db.query(
+      'entries/entryIdToFeedInfo',
+      {
+        startkey: entryId,
+        limit: 1,
+        include_docs: true,
+      }
+    );
+    const feedDoc = this.mapToFeedDoc(response.rows[0].doc!);
+    feedDoc.entries = feedDoc.entries.map((it) => {
+      return it.id === entryId
+        ? {
+            ...it,
+            ...props,
+          }
+        : it;
+    });
+    await this.saveFeed(feedDoc);
+
+    return feedDoc.entries.find(it => it.id === entryId);
+  }
+
   async getFeeds(): Promise<FeedDoc[]> {
     const result = await this.databaseService.db.allDocs({
       include_docs: true,
