@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map } from 'rxjs';
 import { Entry } from 'app/services/database.models';
+import { map } from 'rxjs';
 import { ChannelViewStore } from './channels-view.store';
 
 @UntilDestroy()

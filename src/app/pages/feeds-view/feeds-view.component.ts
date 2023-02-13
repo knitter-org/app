@@ -27,7 +27,7 @@ export class FeedsViewComponent {
   ) {
     route.params.pipe(untilDestroyed(this), map(params => params['id'])).subscribe(this.feedId$);
     this.feed$ = this.feedId$.pipe(mergeMap(feedId => this.feedService.getFeed(feedId!)));
-    this.entries$ = this.feed$.pipe(map(feed => feed.entries));
+    this.entries$ = this.feed$.pipe(map(feed => feed.entries.slice(0, 20)));
   }
 
   async forceFetch() {

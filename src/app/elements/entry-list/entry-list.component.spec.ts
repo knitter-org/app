@@ -1,23 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { createComponentFactory, Spectator } from '@ngneat/spectator';
 
 import { EntryListComponent } from './entry-list.component';
 
 describe('EntryListComponent', () => {
-  let component: EntryListComponent;
-  let fixture: ComponentFixture<EntryListComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ EntryListComponent ]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(EntryListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  let spectator: Spectator<EntryListComponent>;
+  const createComponent = createComponentFactory({
+    component: EntryListComponent,
   });
 
+  beforeEach(() => spectator = createComponent());
+
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });
