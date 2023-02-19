@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowsRotate, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, map, mergeMap, Observable } from 'rxjs';
-import { FeedDoc, Entry } from 'app/services/database.models';
+import { BehaviorSubject, map, mergeMap, Observable, switchMap } from 'rxjs';
+import { Feed, Entry } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
 
 @UntilDestroy()
@@ -17,7 +17,7 @@ export class FeedsViewComponent {
   editIcon = faEdit;
 
   feedId$ = new BehaviorSubject<string|undefined>(undefined);
-  feed$: Observable<FeedDoc>;
+  feed$: Observable<Feed>;
   entries$: Observable<Entry[]>;
 
   constructor(
@@ -27,7 +27,7 @@ export class FeedsViewComponent {
   ) {
     route.params.pipe(untilDestroyed(this), map(params => params['id'])).subscribe(this.feedId$);
     this.feed$ = this.feedId$.pipe(mergeMap(feedId => this.feedService.getFeed(feedId!)));
-    this.entries$ = this.feed$.pipe(map(feed => feed.entries.slice(0, 20)));
+    this.entries$ = this.feed$.pipe(switchMap(feed => this.feedService.getEntries(feed.id)));
   }
 
   async forceFetch() {

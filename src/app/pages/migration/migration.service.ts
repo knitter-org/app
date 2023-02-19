@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DatabaseInfoDoc, FeedDoc } from 'app/services/database.models';
+import { DatabaseInfoDoc, Feed } from 'app/services/database.models';
 import { DatabaseService } from 'app/services/database.service';
 import { FeedService } from 'app/services/feed.service';
 import { rangeEndInclusive } from 'app/utils/range';
@@ -8,7 +8,7 @@ import { rangeEndInclusive } from 'app/utils/range';
   providedIn: 'root',
 })
 export class MigrationService {
-  public readonly TARGET_SCHEMA_VERSION = 2;
+  public readonly TARGET_SCHEMA_VERSION = 3;
   private readonly DATABASE_INFO_DOC_ID = 'database-info';
 
   constructor(private databaseService: DatabaseService) {}
@@ -40,6 +40,9 @@ export class MigrationService {
           break;
         case 2:
           await this.migrateTo2();
+          break;
+        case 3:
+          await this.migrateTo3();
           break;
         default:
           throw new Error(`Migration step ${migrationStep} not implmemented!`);
@@ -74,7 +77,7 @@ export class MigrationService {
       endkey: FeedService.ID_PREFIX + '\ufff0',
     });
     for (let feedDoc of result.rows.map(
-      (row) => row.doc as unknown as FeedDoc
+      (row) => row.doc as any
     )) {
       feedDoc.fetch.intervalMinutes = 5;
       feedDoc.retention = { strategy: 'keep-forever' };
@@ -93,7 +96,7 @@ export class MigrationService {
       _id: '_design/channel-entries',
       views: {
         timeline: {
-          map: function (doc: FeedDoc) {
+          map: function (doc: any) {
             if (doc.type === 'feed') {
               for (let entry of doc.entries) {
                 if (!entry.readAt) {
@@ -116,7 +119,7 @@ export class MigrationService {
       _id: '_design/entries',
       views: {
         entryIdToFeedInfo: {
-          map: function (doc: FeedDoc) {
+          map: function (doc: any) {
             if (doc.type === 'feed') {
               for (let entry of doc.entries) {
                 emit(entry.id, [doc.title, doc.badge]);
@@ -125,9 +128,11 @@ export class MigrationService {
           }.toString(),
         },
         unreadEntries: {
-          map: function (doc: FeedDoc) {
+          map: function (doc: any) {
             if (doc.type === 'feed') {
-              const unreadCount = doc.entries.filter(entry => !entry.readAt).length;
+              const unreadCount = doc.entries.filter(
+                (entry: any) => !entry.readAt
+              ).length;
               emit(doc._id, unreadCount);
             }
           }.toString(),
@@ -135,6 +140,18 @@ export class MigrationService {
       },
     };
     await this.databaseService.db.put(entriesDoc);
+  }
+
+  /** Remove index docs: _design/channel-entries and _design/entries */
+  private async migrateTo3() {
+    try {
+      const doc = await this.databaseService.db.get('_design/channel-entries');
+      await this.databaseService.db.remove(doc);
+    } catch {}
+    try {
+      const doc = await this.databaseService.db.get('_design/entries');
+      await this.databaseService.db.remove(doc);
+    } catch {}
   }
 }
 

@@ -1,9 +1,8 @@
-import { isDevMode, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser'
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { FeedReaderService } from 'app/services/feed-reader.service';
 import { ScheduledFeedFetcherService } from 'app/services/scheduled-feed-fetcher.service';
 import { AppRoutingModule } from './app-routing.module';
@@ -45,7 +44,6 @@ import { SettingsComponent } from './pages/settings/settings.component';
     FontAwesomeModule,
     FeedsAddComponent,
     EntryListComponent,
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
   ],
   providers: [FeedReaderService],
   bootstrap: [AppComponent]

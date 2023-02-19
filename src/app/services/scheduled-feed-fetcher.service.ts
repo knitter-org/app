@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MigrationService } from 'app/pages/migration/migration.service';
 import { concatAll, filter, interval, switchMap, tap } from 'rxjs';
-import { FeedDoc } from './database.models';
+import { Feed } from './database.models';
 import { FeedService } from './feed.service';
 
 const SCHEULDER_INTERVAL_SECONDS = 60;
@@ -21,13 +21,13 @@ export class ScheduledFeedFetcherService {
       filter(needsMigration => !needsMigration),
       switchMap(_ => this.feedService.getFeeds()),
       concatAll(),
-      filter(feedDoc => this.isFetchDue(feedDoc)),
+      filter(feed => this.isFetchDue(feed)),
     )
-    .subscribe(feedDoc => this.feedService.fetchEntries(feedDoc._id));
+    .subscribe(feed => this.feedService.fetchEntries(feed.id));
   }
 
-  private isFetchDue(feedDoc: FeedDoc): boolean {
-    const dueDate = new Date(feedDoc.fetch.lastSuccessfulAt.getTime() + feedDoc.fetch.intervalMinutes * 60000);
+  private isFetchDue(feed: Feed): boolean {
+    const dueDate = new Date(feed.fetch.lastSuccessfulAt.getTime() + feed.fetch.intervalMinutes * 60000);
     return dueDate <= new Date();
   }
 }

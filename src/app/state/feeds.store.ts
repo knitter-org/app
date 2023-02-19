@@ -1,59 +1,38 @@
 import { Injectable } from '@angular/core';
-import {
-  ComponentStore,
-  OnStateInit,
-  tapResponse
-} from '@ngrx/component-store';
-import { FeedDoc } from 'app/services/database.models';
+import { FeedData } from '@extractus/feed-extractor';
+import { createStore } from '@ngneat/elf';
+import { selectAllEntities, getEntity, setEntities, withEntities } from '@ngneat/elf-entities';
+import { Feed } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
-import { docsToIdMap } from 'app/utils/collections';
-import { Map } from 'immutable';
-import { Observable, switchMap } from 'rxjs';
+import { shareReplay } from 'rxjs';
 
-export interface FeedsState {
-  feedsIdMap: Map<string, FeedDoc>;
-}
+const store = createStore(
+  { name: 'feeds' },
+  withEntities<Feed>()
+);
 
-@Injectable()
-export class FeedsStore
-  extends ComponentStore<FeedsState>
-  implements OnStateInit
-{
+@Injectable({ providedIn: 'root' })
+export class FeedsRepository {
+  feeds$ = store.pipe(selectAllEntities(), shareReplay({ refCount: true }));
+
   constructor(private feedService: FeedService) {
-    super({
-      feedsIdMap: Map(),
-    });
+    this.loadFeeds();
   }
 
-  ngrxOnStateInit() {
-    this.popoulateFeedsIdMap();
+  getFeed(id: string): Feed | undefined {
+    return store.query(getEntity(id));
   }
 
-  readonly feeds$ = this.select((state) => [...state.feedsIdMap.values()]);
+  async createFeedFromUrl(url: string): Promise<Feed> {
+    throw new Error('Method not implemented.');
+  }
 
-  readonly feedById$ = (feedId: string) =>
-    this.select((state) => state.feedsIdMap.get(feedId));
+  async updateFeed(feed: Feed) {
+    const savedFeedDoc = await this.feedService.saveFeed(feed);
+    store.update(setEntities([savedFeedDoc]));
+  }
 
-  readonly updateFeed = this.effect((trigger$: Observable<FeedDoc>) =>
-    trigger$.pipe(
-      switchMap((feedDoc) => this.feedService.saveFeed(feedDoc)),
-      tapResponse(
-        (feedDoc) =>
-          this.patchState((state) => ({
-            feedsIdMap: state.feedsIdMap.set(feedDoc._id, feedDoc),
-          })),
-        (error) => console.log('FeedsStore updateFeed error:', error)
-      )
-    )
-  );
-
-  readonly popoulateFeedsIdMap = this.effect((trigger$: Observable<void>) =>
-    trigger$.pipe(
-      switchMap((_) => this.feedService.getFeeds()),
-      tapResponse(
-        (feeds) => this.patchState({ feedsIdMap: docsToIdMap(feeds) }),
-        (error) => console.log('FeedsStore fetchFeeds error:', error)
-      )
-    )
-  );
+  private loadFeeds() {
+    this.feedService.getFeeds().then(feeds => store.update(setEntities(feeds)));
+  }
 }

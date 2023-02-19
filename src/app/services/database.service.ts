@@ -33,6 +33,10 @@ export class DatabaseService {
     } catch {}
   }
 
+  async get<T extends Doc>(id: string): Promise<T> {
+    return this.db.get(id);
+  }
+
   async put(doc: Doc) {
     return this.db.put(doc);
   }

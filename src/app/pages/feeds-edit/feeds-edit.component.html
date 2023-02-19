@@ -4,14 +4,20 @@
   <div class="form-floating mb-3">
     <input
       formControlName="title"
-      [class.is-invalid]="form.get('title')?.errors && (form.get('title')?.touched || form.get('title')?.dirty)"
+      [class.is-invalid]="
+        form.get('title')?.errors &&
+        (form.get('title')?.touched || form.get('title')?.dirty)
+      "
       id="title"
       type="text"
       placeholder="World News"
       class="form-control"
     />
     <label for="title">Title</label>
-    <div *ngIf="form.get('title')?.errors?.['required'] && (form.get('title')?.touched || form.get('title')?.dirty)" class="invalid-feedback">
+    <div
+      *ngIf="form.get('title')?.errors?.['required'] && (form.get('title')?.touched || form.get('title')?.dirty)"
+      class="invalid-feedback"
+    >
       Tilte is required and cannot be blank.
     </div>
   </div>
@@ -41,6 +47,54 @@
       <label for="fetchIntervalMinutes">Fetch Interval</label>
     </div>
     <span class="input-group-text">Minutes</span>
+  </div>
+
+
+  <div class="card">
+    <div class="card-header">
+      Entry Retention Strategy
+    </div>
+    <div class="card-body">
+      <div class="input-group mb-3">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            formControlName="retentionStrategy"
+            value="keep-forever"
+            id="retentionKeepForever"
+          />
+          <label class="form-check-label" for="retentionKeepForever">
+            Keep Forever
+          </label>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            formControlName="retentionStrategy"
+            value="delete-older-than"
+            id="retentionDeleteOlderThan"
+          />
+          <label class="form-check-label" for="retentionDeleteOlderThan">
+            Delete Older Than
+          </label>
+        </div>
+
+        <input
+          formControlName="retentionDeleteOlderThanHours"
+          [class.is-invalid]="form.get('retentionDeleteOlderThanHours')?.errors"
+          id="retentionDeleteOlderThanHours"
+          type="number"
+          placeholder="5"
+          class="form-control form-control-sm mx-3"
+        />
+        <label for="retentionDeleteOlderThanHours">Minutes</label>
+      </div>
+    </div>
   </div>
 
   <div class="d-flex justify-content-end">

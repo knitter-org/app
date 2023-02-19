@@ -1,8 +1,37 @@
 import { Injectable } from '@angular/core';
 import { hashCode } from 'app/utils/string';
-import { Entry, FeedDoc } from './database.models';
+import { Doc, Entry, Feed } from './database.models.d';
 import { DatabaseService } from './database.service';
 import { FeedReaderService, FetchedEntry } from './feed-reader.service';
+
+export interface FeedDoc extends Doc {
+  title: string;
+  badge?: string;
+  url: string;
+  fetch: {
+    lastSuccessfulAt: string;
+    intervalMinutes: number;
+  };
+  retention: RetentionKeepForever | RetentionDeleteOlderThan;
+  entries: EntryDoc[];
+}
+
+export interface RetentionKeepForever {
+  strategy: 'keep-forever';
+}
+export interface RetentionDeleteOlderThan {
+  strategy: 'delete-older-than';
+  thresholdHours: number;
+}
+
+export interface EntryDoc {
+  id: string;
+  title: string;
+  text: string;
+  publishedAt: string;
+  readAt?: string;
+  url: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +49,8 @@ export class FeedService {
     url: string,
     fetchedAt: Date,
     entries: FetchedEntry[]
-  ): Promise<FeedDoc> {
-    const feedId = this.generateFeedId(url);
+  ): Promise<Feed> {
+    const feedId = FeedService.generateFeedId(url);
 
     const feedDoc: FeedDoc = {
       _id: feedId,
@@ -29,36 +58,42 @@ export class FeedService {
       title,
       url,
       fetch: {
-        lastSuccessfulAt: fetchedAt,
+        lastSuccessfulAt: fetchedAt.toISOString(),
         intervalMinutes: 5,
       },
       retention: { strategy: 'keep-forever' },
-      entries: entries.map((fetchedEntry) => this.mapToEntry(fetchedEntry)),
+      entries: entries.map((fetchedEntry) => this.mapToEntryDoc(fetchedEntry)),
     };
-
-    await this.saveFeed(feedDoc);
-    return await this.getFeed(feedId);
-  }
-
-  async saveFeed(feedDoc: FeedDoc): Promise<FeedDoc> {
-    if (!feedDoc.badge || feedDoc.badge.trim() === '') {
-      feedDoc.badge = undefined;
-    }
-
-    this.updateFeedEntryOrder(feedDoc);
 
     const response = await this.databaseService.put(feedDoc);
     return await this.getFeed(response.id);
   }
 
+  async saveFeed(feed: Feed): Promise<Feed> {
+    if (!feed.badge || feed.badge.trim() === '') {
+      feed.badge = undefined;
+    }
+
+    // this.updateFeedEntryOrder(feed);
+
+    throw 'todo';
+    // const response = await this.databaseService.put(feed);
+    // return await this.getFeed(response.id);
+  }
+
+  async getEntries(feedId: string): Promise<Entry[]> {
+    const feedDoc: FeedDoc = await this.databaseService.db.get(feedId);
+    return feedDoc.entries.map(entryDoc => this.mapToEntry(entryDoc, feedDoc._id));
+  }
+
   async fetchEntries(feedId: string) {
-    const feedDoc = await this.getFeed(feedId);
+    const feedDoc = await this.databaseService.get<FeedDoc>(feedId);
     const fetchedAt = new Date();
     const fetchResult = await this.feedReaderService.fetchFeed(feedDoc.url);
 
     const newEntries = fetchResult.entries
-      .filter((entry) => entry.publishedAt > feedDoc.fetch.lastSuccessfulAt)
-      .map((fetchedEntry) => this.mapToEntry(fetchedEntry));
+      .filter((entry) => entry.publishedAt.toISOString() > feedDoc.fetch.lastSuccessfulAt)
+      .map((fetchedEntry) => this.mapToEntryDoc(fetchedEntry));
     if (newEntries.length > 0) {
       feedDoc.entries = [...newEntries, ...feedDoc.entries];
       console.log(
@@ -70,93 +105,85 @@ export class FeedService {
       );
     }
 
-    feedDoc.fetch.lastSuccessfulAt = fetchedAt;
-    return await this.saveFeed(feedDoc);
+    feedDoc.fetch.lastSuccessfulAt = fetchedAt.toISOString();
+
+    const response = await this.databaseService.put(feedDoc);
+    return await this.getFeed(response.id);
   }
 
-  async updateEntry(entryId: string, props: Partial<Entry>): Promise<Entry | undefined> {
-    const response = await this.databaseService.db.query(
-      'entries/entryIdToFeedInfo',
-      {
-        startkey: entryId,
-        limit: 1,
-        include_docs: true,
+  async markEntryAsRead(feedId: string, entryId: string): Promise<Entry> {
+    const feedDoc: FeedDoc = await this.databaseService.db.get(feedId);
+    feedDoc.entries = feedDoc.entries.map(entryDoc => {
+      if (entryDoc.id === entryId) {
+        return {
+          ...entryDoc,
+          readAt: entryDoc.readAt ?? new Date().toISOString(),
+        };
       }
-    );
-    const feedDoc = this.mapToFeedDoc(response.rows[0].doc!);
-    feedDoc.entries = feedDoc.entries.map((it) => {
-      return it.id === entryId
-        ? {
-            ...it,
-            ...props,
-          }
-        : it;
+      return entryDoc;
     });
-    await this.saveFeed(feedDoc);
+    await this.databaseService.put(feedDoc);
 
-    return feedDoc.entries.find(it => it.id === entryId);
+    const entryDoc = feedDoc.entries.find(it => it.id === entryId);
+    return this.mapToEntry(entryDoc!, feedDoc._id);
   }
 
-  async getFeeds(): Promise<FeedDoc[]> {
+  async getFeeds(): Promise<Feed[]> {
     const result = await this.databaseService.db.allDocs({
       include_docs: true,
       startkey: FeedService.ID_PREFIX,
       endkey: FeedService.ID_PREFIX + '\ufff0',
     });
-    return result.rows.map((row: any) => this.mapToFeedDoc(row.doc));
+    return result.rows.map(row => this.mapToFeed(row.doc as FeedDoc));
   }
 
-  async getFeed(feedId: string): Promise<FeedDoc> {
-    const feed: FeedDoc = await this.databaseService.db.get(feedId);
-    return this.mapToFeedDoc(feed);
+  async getFeed(feedId: string): Promise<Feed> {
+    const feedDoc: FeedDoc = await this.databaseService.db.get(feedId);
+    return this.mapToFeed(feedDoc);
   }
 
   async getUnreadEntryCountForFeedId(feedId: string): Promise<number> {
-    const response = await this.databaseService.db.query(
-      'entries/unreadEntries',
-      {
-        startkey: feedId,
-        limit: 1,
-      }
-    );
-    return response.rows[0].value;
+    const feedDoc: FeedDoc = await this.databaseService.db.get(feedId);
+    return feedDoc.entries.filter(entryDoc => !entryDoc.readAt).length;
   }
 
   async getFeedTitleAndBadgeByEntry(
     entry: Entry
   ): Promise<{ title: string; badge?: string }> {
-    const response = await this.databaseService.db.query(
-      'entries/entryIdToFeedInfo',
-      {
-        startkey: entry.id,
-        limit: 1,
+    const feedDoc: FeedDoc = await this.databaseService.db.get(entry.feedId);
+    return { title: feedDoc.title, badge: feedDoc.badge };
+  }
+
+  private mapToFeed(doc: FeedDoc): Feed {
+    return {
+      ...doc,
+      id: doc._id,
+      rev: doc._rev!,
+      fetch: {
+        ...doc.fetch,
+        lastSuccessfulAt: new Date(doc.fetch.lastSuccessfulAt),
       }
-    );
-    const [title, badge] = response.rows[0].value;
-    return { title, badge };
+    };
   }
 
-  private mapToFeedDoc(doc: any): FeedDoc {
-    doc.fetch.lastSuccessfulAt = new Date(doc.fetch.lastSuccessfulAt);
-    doc.entries = doc.entries.map((entry: any) => this.mapToFeedEntry(entry));
-    return doc as FeedDoc;
+  private mapToEntry(entry: EntryDoc, feedId: string): Entry {
+    return {
+      ...entry,
+      feedId,
+      publishedAt: new Date(entry.publishedAt),
+      readAt: entry.readAt ? new Date(entry.readAt) : undefined,
+    };
   }
 
-  private mapToFeedEntry(entry: Entry): Entry {
-    entry.publishedAt = new Date(entry.publishedAt);
-    entry.readAt = entry.readAt ? new Date(entry.readAt) : undefined;
-    return entry;
-  }
-
-  private mapToEntry(fetched: FetchedEntry): Entry {
-    const entry: Entry = {
+  private mapToEntryDoc(fetched: FetchedEntry): EntryDoc {
+    return {
       ...fetched,
       id: this.generateEntryId(fetched.url, fetched.publishedAt),
+      publishedAt: fetched.publishedAt.toISOString(),
     };
-    return entry;
   }
 
-  private generateFeedId(url: string): string {
+  static generateFeedId(url: string): string {
     const hostname = new URL(url).hostname;
     const hash = Math.abs(hashCode(url)).toString(36);
     return `${FeedService.ID_PREFIX}${hostname}-${hash}`;
@@ -170,7 +197,7 @@ export class FeedService {
 
   private updateFeedEntryOrder(feedDoc: FeedDoc) {
     feedDoc.entries.sort(
-      (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()
+      (a, b) => a.publishedAt == b.publishedAt ? 0 : (a.publishedAt < b.publishedAt ? -1 : 1)
     );
   }
 }

@@ -15,7 +15,7 @@
   <nav *ngIf="feedVms.length > 0" class="nav nav-pills flex-column mt-2 feeds">
     <a
       *ngFor="let feedVm of feedVms"
-      [routerLink]="['/feeds', feedVm._id]"
+      [routerLink]="['/feeds', feedVm.id]"
       routerLinkActive="active"
       ariaCurrentWhenActive="page"
       class="nav-link"

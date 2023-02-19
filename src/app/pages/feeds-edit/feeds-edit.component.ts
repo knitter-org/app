@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { FeedDoc } from 'app/services/database.models';
-import { FeedsStore } from 'app/state/feeds.store';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { Feed } from 'app/services/database.models';
+import { FeedsRepository } from 'app/state/feeds.store';
+import { BehaviorSubject, map, tap } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -12,37 +12,63 @@ import { BehaviorSubject, switchMap } from 'rxjs';
   templateUrl: './feeds-edit.component.html',
   styleUrls: ['./feeds-edit.component.less'],
 })
-export class FeedsEditComponent {
-  readonly feed$ = new BehaviorSubject<FeedDoc | undefined>(undefined);
+export class FeedsEditComponent implements OnInit {
+  readonly feed$ = new BehaviorSubject<Feed | undefined>(undefined);
 
   form = new FormGroup({
     title: new FormControl('', [Validators.required]),
     badge: new FormControl(''),
-    fetchIntervalMinutes: new FormControl('', [Validators.required, Validators.min(1)]),
+    fetchIntervalMinutes: new FormControl('', [
+      Validators.required,
+      Validators.min(1),
+    ]),
+    retentionStrategy: new FormControl('', [Validators.required]),
+    retentionDeleteOlderThanHours: new FormControl('', [
+      Validators.required,
+      Validators.min(1),
+    ]),
   });
 
   constructor(
-    route: ActivatedRoute,
-    private feedsStore: FeedsStore
-  ) {
-    route.params
+    private route: ActivatedRoute,
+    private feedsRepo: FeedsRepository
+  ) {}
+
+  ngOnInit() {
+    this.form.valueChanges.subscribe((formValue) => {
+      if (formValue.retentionStrategy === 'delete-older-than') {
+        this.form
+          .get('retentionDeleteOlderThanHours')!
+          .enable({ emitEvent: false });
+      } else {
+        this.form
+          .get('retentionDeleteOlderThanHours')!
+          .disable({ emitEvent: false });
+      }
+    });
+
+    this.feed$.pipe(untilDestroyed(this)).subscribe((feed) => {
+      if (feed) {
+        this.form.setValue({
+          title: feed.title,
+          badge: feed.badge || '',
+          fetchIntervalMinutes: '' + feed.fetch.intervalMinutes,
+          retentionStrategy: feed.retention.strategy,
+          retentionDeleteOlderThanHours: '24',
+        });
+      }
+    });
+
+    this.route.params
       .pipe(
         untilDestroyed(this),
-        switchMap((params) => this.feedsStore.feedById$(params['id']))
+        map((params) => this.feedsRepo.getFeed(params['id']))
       )
       .subscribe(this.feed$);
-
-    this.feed$.pipe(untilDestroyed(this)).subscribe((feed) =>
-      feed && this.form.setValue({
-        title: feed.title,
-        badge: feed.badge || '',
-        fetchIntervalMinutes: '' + feed.fetch.intervalMinutes,
-      })
-    );
   }
 
   async saveFeed() {
-    const feedDoc = {
+    const feed = {
       ...this.feed$.value!,
       title: this.form.controls.title.value!.trim(),
       badge: this.form.controls.badge.value!.trim(),
@@ -51,6 +77,6 @@ export class FeedsEditComponent {
         intervalMinutes: +this.form.controls.fetchIntervalMinutes.value!.trim(),
       },
     };
-    await this.feedsStore.updateFeed(feedDoc);
+    await this.feedsRepo.updateFeed(feed);
   }
 }

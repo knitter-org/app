@@ -1,26 +1,25 @@
 export interface Doc {
-  _id: string,
-  _rev?: string,
-  type: 'feed' | 'entry' | 'channel' | 'settings' | 'database-info',
+  _id: string;
+  _rev?: string;
+  type: 'feed' | 'entry' | 'channel' | 'settings' | 'database-info';
 }
 
 export interface DatabaseInfoDoc extends Doc {
-  _id: 'database-info',
-  type: 'database-info',
-  schemaVersion: number,
+  _id: 'database-info';
+  type: 'database-info';
+  schemaVersion: number;
 }
-
-export interface FeedDoc extends Doc {
-    type: 'feed',
-    title: string,
-    badge?: string,
-    url: string,
-    fetch: {
-        lastSuccessfulAt: Date,
-        intervalMinutes: number;
-    },
-    retention: RetentionKeepForever | RetentionDeleteOlderThan,
-    entries: Entry[],
+export interface Feed {
+  id: string;
+  rev: string;
+  title: string;
+  badge?: string;
+  url: string;
+  fetch: {
+    lastSuccessfulAt: Date;
+    intervalMinutes: number;
+  };
+  retention: RetentionKeepForever | RetentionDeleteOlderThan;
 }
 
 export interface RetentionKeepForever {
@@ -32,30 +31,31 @@ export interface RetentionDeleteOlderThan {
 }
 
 export interface Entry {
-  id: string,
-  title: string,
-  text: string,
-  publishedAt: Date,
-  readAt?: Date,
-  url: string,
+  id: string;
+  feedId: string;
+  title: string;
+  text: string;
+  publishedAt: Date;
+  readAt?: Date;
+  url: string;
 }
 
 export interface ChannelOrderDoc extends Doc {
-  order: string[],
+  order: string[];
 }
 
 export interface ChannelDoc extends Doc {
-  type: 'channel',
-  title: string,
+  type: 'channel';
+  title: string;
 }
 
 export interface SyncSettingsDoc extends Doc {
-  type: 'settings',
-  _id: 'settings:sync',
-  serverUrl: string,
+  type: 'settings';
+  _id: 'settings:sync';
+  serverUrl: string;
 }
 export interface FeedProxySettingsDoc extends Doc {
-  type: 'settings',
-  _id: 'settings:feed-proxy',
-  proxyUrl: string,
+  type: 'settings';
+  _id: 'settings:feed-proxy';
+  proxyUrl: string;
 }

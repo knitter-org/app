@@ -4,13 +4,11 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { provideComponentStore } from '@ngrx/component-store';
-import { firstValueFrom } from 'rxjs';
+import { FeedsRepository } from 'app/state/feeds.store';
 import CustomValidators from '../../utils/custom-validators';
-import { FeedsAddStore } from './feeds-add.store';
 
 @Component({
   selector: 'app-feeds-add',
@@ -18,14 +16,11 @@ import { FeedsAddStore } from './feeds-add.store';
   styleUrls: ['./feeds-add.component.less'],
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  providers: [provideComponentStore(FeedsAddStore)],
 })
 export class FeedsAddComponent {
-  state$ = this.feedsAddStore.state$;
+  fetchActive = false;
 
-  constructor(
-    private router: Router,
-    private feedsAddStore: FeedsAddStore) {}
+  constructor(private router: Router, private feedsRepo: FeedsRepository) {}
 
   form = new FormGroup({
     url: new FormControl('', [Validators.required, CustomValidators.url]),
@@ -33,9 +28,13 @@ export class FeedsAddComponent {
 
   async addFeed() {
     const url = this.form.value.url!.trim();
-    this.feedsAddStore.fetchAndAddFeed(url);
 
-    const feedDoc = await firstValueFrom(this.feedsAddStore.createdFeedDoc$);
-    await this.router.navigate(['feeds', feedDoc?._id]);
+    try {
+      this.fetchActive = true;
+      const feedDoc = await this.feedsRepo.createFeedFromUrl(url);
+      await this.router.navigate(['feeds', feedDoc?.id]);
+    } catch {
+      this.fetchActive = false;
+    }
   }
 }

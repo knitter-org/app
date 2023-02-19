@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ChannelDoc, ChannelOrderDoc, Entry, FeedDoc } from './database.models';
+import { ChannelDoc, ChannelOrderDoc, Entry } from './database.models';
 import { DatabaseService } from './database.service';
 
 @Injectable({

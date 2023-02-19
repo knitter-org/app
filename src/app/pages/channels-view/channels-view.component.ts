@@ -13,29 +13,28 @@ import { ChannelViewStore } from './channels-view.store';
   providers: [ChannelViewStore],
 })
 export class ChannelsViewComponent {
-  readonly channel$ = this.channelViewStore.state$.pipe(
-    map((state) => state.channel)
-  );
+  readonly channel$ = this.channelViewStore.channel$;
 
-  readonly entries$ = this.channelViewStore.state$.pipe(
-    map((state) => state.entries?.toArray() || [])
-  );
+  readonly entries$ = this.channelViewStore.entries$;
 
-  readonly isLoading$ = this.channelViewStore.state$.pipe(
-    map((state) => state.isLoading)
-  );
+  readonly isLoading$ = this.channelViewStore.isLoading$;
 
   constructor(
     route: ActivatedRoute,
     private channelViewStore: ChannelViewStore
   ) {
-    const channelId$ = route.params.pipe(map((params) => params['id']));
-    channelId$
-      .pipe(untilDestroyed(this))
-      .subscribe((channelId) => this.channelViewStore.updateForChannelId(channelId));
+    route.params
+      .pipe(
+        map((params) => params['id']),
+        untilDestroyed(this)
+      )
+      .subscribe((channelId) =>
+        this.channelViewStore.updateForChannelId(channelId)
+      );
   }
 
   onEntryRead(entry: Entry) {
-    this.channelViewStore.onEntryRead(entry);
+    console.debug('TODO onEntryRead', entry);
+    // this.channelViewStore.onEntryRead(entry);
   }
 }
