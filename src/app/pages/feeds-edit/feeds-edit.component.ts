@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { filterNil } from '@ngneat/elf';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -36,6 +36,7 @@ export class FeedsEditComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private feedsRepo: FeedsRepository
   ) {}
 
@@ -96,5 +97,6 @@ export class FeedsEditComponent implements OnInit {
       retention,
     };
     await this.feedsRepo.updateFeed(feed);
+    this.router.navigate(['feeds', feed.id]);
   }
 }

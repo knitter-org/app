@@ -2,11 +2,13 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { createStore, filterNil, select, Store, withProps } from '@ngneat/elf';
 import {
   selectAllEntities,
+  setEntities,
+  upsertEntities,
   withEntities
 } from '@ngneat/elf-entities';
 import { Entry, Feed } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
-import { Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 
 interface FeedViewProps {
   isLoading: boolean;
@@ -43,13 +45,22 @@ export class FeedViewRepository implements OnDestroy {
     return this.store.pipe(selectAllEntities());
   }
 
-  loadFeed(feedId: string) {
+  async loadFeed(feedId: string) {
     this.store.reset();
+
     this.store.update(state => ({...state, isLoading: true}));
 
-    this.feedService
-      .getFeed(feedId)
-      .then((feed) => this.store.update((state) => ({ ...state, feed: feed })))
-      // .then(() => this.loadEntries());
+    // Load feed first
+    const feed = await this.feedService.getFeed(feedId);
+    this.store.update((state) => ({ ...state, feed: feed }));
+
+    // Then, load the entries
+    const entries = await (await this.feedService.getEntries(feedId)).filter(entry => !entry.readAt);
+    this.store.update(setEntities(entries), (state) => ({ ...state, isLoading: false }));
+  }
+
+  async markEntryAsRead(entry: Entry) {
+    const updatedEntry = await this.feedService.markEntryAsRead(entry.feedId, entry.id);
+    this.store.update(upsertEntities(updatedEntry));
   }
 }

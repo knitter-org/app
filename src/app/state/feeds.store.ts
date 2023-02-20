@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore } from '@ngneat/elf';
-import { getEntity, selectAllEntities, selectEntity, setEntities, withEntities } from '@ngneat/elf-entities';
+import { selectAllEntities, selectEntity, setEntities, upsertEntities, withEntities } from '@ngneat/elf-entities';
 import { Feed } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
 import { Observable, shareReplay } from 'rxjs';
@@ -28,7 +28,7 @@ export class FeedsRepository {
 
   async updateFeed(feed: Feed) {
     const savedFeedDoc = await this.feedService.saveFeed(feed);
-    store.update(setEntities([savedFeedDoc]));
+    store.update(upsertEntities(savedFeedDoc));
   }
 
   private loadFeeds() {

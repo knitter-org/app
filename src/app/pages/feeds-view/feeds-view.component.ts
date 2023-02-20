@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowsRotate, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -6,6 +6,7 @@ import { BehaviorSubject, map, mergeMap, Observable, switchMap } from 'rxjs';
 import { Feed, Entry } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
 import { FeedViewRepository } from './feed-view.store';
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 
 @UntilDestroy()
 @Component({
@@ -38,15 +39,17 @@ export class FeedsViewComponent implements OnInit {
   }
 
   async forceFetch() {
+    alert('todo');
+    // const feed = await firstValueFrom(this.feed$);
     // await this.feedService.fetchEntries(this.feedId$.value!);
     // this.feedId$.next(this.feedId$.value);
   }
   async editFeed() {
-    // this.router.navigate(['feeds', this.feedId$.value, 'edit']);
+    const feed = await firstValueFrom(this.feed$);
+    this.router.navigate(['feeds', feed.id, 'edit']);
   }
 
   onEntryRead(entry: Entry) {
-    console.log('TODO implement entry read', entry);
-    // this.channelViewStore.markEntryAsRead(entryDoc);
+    this.feedViewRepo.markEntryAsRead(entry);
   }
 }
