@@ -1,5 +1,5 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, Spectator } from '@ngneat/spectator';
 import { FeedsRepository } from 'app/state/feeds.store';
 import { of } from 'rxjs';
@@ -18,7 +18,7 @@ describe('FeedsEditComponent', () => {
         },
       },
     ],
-    mocks: [FeedsRepository],
+    mocks: [FeedsRepository, Router],
     imports: [ReactiveFormsModule],
     detectChanges: false,
   });
