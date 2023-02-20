@@ -1,18 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Entry } from 'app/services/database.models';
-import { FeedService } from 'app/services/feed.service';
+import { FeedsRepository } from 'app/state/feeds.store';
+import { firstValueFrom } from 'rxjs';
 
 @Pipe({
   name: 'feedBadge',
   standalone: true,
 })
 export class FeedBadgePipe implements PipeTransform {
-  constructor(private feedService: FeedService) {}
+  constructor(private feedsRepo: FeedsRepository) {}
 
   async transform(entry: Entry): Promise<string> {
-    const { title, badge } = await this.feedService.getFeedTitleAndBadgeByEntry(
-      entry
-    );
-    return badge ?? title;
+    const { title, badge } = await firstValueFrom(this.feedsRepo.getFeed$(entry.feedId)) ?? {};
+    return badge ?? title ?? 'error';
   }
 }

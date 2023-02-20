@@ -23,8 +23,6 @@ describe('FeedsEditComponent', () => {
     detectChanges: false,
   });
 
-  // beforeEach(() => (spectator = createComponent()));
-
   describe('retention strategy', () => {
     const keepForeverInput = () =>
       spectator.query('#retentionKeepForever')! as HTMLInputElement;
@@ -32,6 +30,8 @@ describe('FeedsEditComponent', () => {
       spectator.query('#retentionDeleteOlderThan')! as HTMLInputElement;
     const deleteOlderThanHoursInput = () =>
       spectator.query('#retentionDeleteOlderThanHours')! as HTMLInputElement;
+    const saveButton = () =>
+      spectator.query('button[type=submit]')! as HTMLButtonElement;
 
     describe('initially keep-forever', () => {
       beforeEach(() => {
@@ -40,7 +40,7 @@ describe('FeedsEditComponent', () => {
         });
 
         spectator = createComponent();
-        spectator.inject(FeedsRepository).getFeed.and.returnValue(feed);
+        spectator.inject(FeedsRepository).getFeed$.and.returnValue(of(feed));
         spectator.detectChanges();
       });
 
@@ -49,16 +49,30 @@ describe('FeedsEditComponent', () => {
         expect(deleteOlderThanInput().checked).toBeFalse();
         expect(deleteOlderThanHoursInput().disabled).toBeTrue();
       });
+
+      it('should allow to select the deleteOlderThan option and save', () => {
+        spectator.click(deleteOlderThanInput());
+
+        expect(keepForeverInput().checked).toBeFalse();
+        expect(deleteOlderThanInput().checked).toBeTrue();
+        expect(deleteOlderThanHoursInput().disabled).toBeFalse();
+
+        spectator.click(saveButton());
+
+        expect(spectator.inject(FeedsRepository).updateFeed).toHaveBeenCalledOnceWith(jasmine.objectContaining({
+          retention: { strategy: 'delete-older-than', thresholdHours: 24 }
+        }));
+      });
     });
 
     describe('initially delete-older-than', () => {
       beforeEach(() => {
         const feed = produceFeed({
-          retention: { strategy: 'delete-older-than', thresholdHours: 24 },
+          retention: { strategy: 'delete-older-than', thresholdHours: 10 },
         });
 
         spectator = createComponent();
-        spectator.inject(FeedsRepository).getFeed.and.returnValue(feed);
+        spectator.inject(FeedsRepository).getFeed$.and.returnValue(of(feed));
         spectator.detectChanges();
       });
 
@@ -66,6 +80,20 @@ describe('FeedsEditComponent', () => {
         expect(keepForeverInput().checked).toBeFalse();
         expect(deleteOlderThanInput().checked).toBeTrue();
         expect(deleteOlderThanHoursInput().disabled).toBeFalse();
+      });
+
+      it('should allow to select the keepForever option and save', () => {
+        spectator.click(keepForeverInput());
+
+        expect(keepForeverInput().checked).toBeTrue();
+        expect(deleteOlderThanInput().checked).toBeFalse();
+        expect(deleteOlderThanHoursInput().disabled).toBeTrue();
+
+        spectator.click(saveButton());
+
+        expect(spectator.inject(FeedsRepository).updateFeed).toHaveBeenCalledOnceWith(jasmine.objectContaining({
+          retention: { strategy: 'keep-forever' }
+        }));
       });
     });
   });

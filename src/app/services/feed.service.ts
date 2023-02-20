@@ -64,6 +64,7 @@ export class FeedService {
       retention: { strategy: 'keep-forever' },
       entries: entries.map((fetchedEntry) => this.mapToEntryDoc(fetchedEntry)),
     };
+    this.updateFeedDocEntryOrder(feedDoc);
 
     const response = await this.databaseService.put(feedDoc);
     return await this.getFeed(response.id);
@@ -74,15 +75,14 @@ export class FeedService {
       feed.badge = undefined;
     }
 
-    // this.updateFeedEntryOrder(feed);
+    const feedDoc: FeedDoc = await this.databaseService.get(feed.id);
 
-    throw 'todo';
-    // const response = await this.databaseService.put(feed);
-    // return await this.getFeed(response.id);
+    const response = await this.databaseService.put(this.mapToFeedDoc(feed, feedDoc.entries));
+    return await this.getFeed(response.id);
   }
 
   async getEntries(feedId: string): Promise<Entry[]> {
-    const feedDoc: FeedDoc = await this.databaseService.db.get(feedId);
+    const feedDoc: FeedDoc = await this.databaseService.get(feedId);
     return feedDoc.entries.map(entryDoc => this.mapToEntry(entryDoc, feedDoc._id));
   }
 
@@ -96,6 +96,7 @@ export class FeedService {
       .map((fetchedEntry) => this.mapToEntryDoc(fetchedEntry));
     if (newEntries.length > 0) {
       feedDoc.entries = [...newEntries, ...feedDoc.entries];
+      this.updateFeedDocEntryOrder(feedDoc);
       console.log(
         `Fetch finished for ${feedDoc._id} (${feedDoc.title}): ${newEntries.length} new entries since ${feedDoc.fetch.lastSuccessfulAt}`
       );
@@ -147,13 +148,6 @@ export class FeedService {
     return feedDoc.entries.filter(entryDoc => !entryDoc.readAt).length;
   }
 
-  async getFeedTitleAndBadgeByEntry(
-    entry: Entry
-  ): Promise<{ title: string; badge?: string }> {
-    const feedDoc: FeedDoc = await this.databaseService.db.get(entry.feedId);
-    return { title: feedDoc.title, badge: feedDoc.badge };
-  }
-
   private mapToFeed(doc: FeedDoc): Feed {
     return {
       ...doc,
@@ -163,6 +157,20 @@ export class FeedService {
         ...doc.fetch,
         lastSuccessfulAt: new Date(doc.fetch.lastSuccessfulAt),
       }
+    };
+  }
+
+  private mapToFeedDoc(feed: Feed, entries: FeedDoc['entries']): FeedDoc {
+    return {
+      ...feed,
+      _id: feed.id,
+      _rev: feed.rev,
+      type: 'feed',
+      fetch: {
+        ...feed.fetch,
+        lastSuccessfulAt: feed.fetch.lastSuccessfulAt.toISOString(),
+      },
+      entries
     };
   }
 
@@ -195,7 +203,7 @@ export class FeedService {
     return `${urlHash}${dateHash}`;
   }
 
-  private updateFeedEntryOrder(feedDoc: FeedDoc) {
+  private updateFeedDocEntryOrder(feedDoc: FeedDoc) {
     feedDoc.entries.sort(
       (a, b) => a.publishedAt == b.publishedAt ? 0 : (a.publishedAt < b.publishedAt ? -1 : 1)
     );

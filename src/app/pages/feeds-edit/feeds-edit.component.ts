@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { filterNil } from '@ngneat/elf';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Feed } from 'app/services/database.models';
+import {
+  Feed,
+  RetentionDeleteOlderThan,
+  RetentionKeepForever,
+} from 'app/services/database.models';
 import { FeedsRepository } from 'app/state/feeds.store';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, map, switchMap, tap } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -47,27 +52,39 @@ export class FeedsEditComponent implements OnInit {
       }
     });
 
-    this.feed$.pipe(untilDestroyed(this)).subscribe((feed) => {
-      if (feed) {
+    this.feed$.pipe(filterNil(), untilDestroyed(this)).subscribe((feed) => {
+        const retentionDeleteOlderThanHours =
+          feed.retention.strategy == 'delete-older-than'
+            ? feed.retention.thresholdHours
+            : 24;
+
         this.form.setValue({
           title: feed.title,
           badge: feed.badge || '',
           fetchIntervalMinutes: '' + feed.fetch.intervalMinutes,
           retentionStrategy: feed.retention.strategy,
-          retentionDeleteOlderThanHours: '24',
+          retentionDeleteOlderThanHours: '' + retentionDeleteOlderThanHours,
         });
-      }
     });
 
     this.route.params
       .pipe(
-        untilDestroyed(this),
-        map((params) => this.feedsRepo.getFeed(params['id']))
+        switchMap((params) => this.feedsRepo.getFeed$(params['id'])),
+        untilDestroyed(this)
       )
       .subscribe(this.feed$);
   }
 
   async saveFeed() {
+    let retention: RetentionKeepForever | RetentionDeleteOlderThan;
+    if (this.form.controls.retentionStrategy.value === 'keep-forever') {
+      retention = { strategy: 'keep-forever' };
+    } else {
+      retention = {
+        strategy: 'delete-older-than',
+        thresholdHours: +this.form.controls.retentionDeleteOlderThanHours.value!,
+      };
+    }
     const feed = {
       ...this.feed$.value!,
       title: this.form.controls.title.value!.trim(),
@@ -76,6 +93,7 @@ export class FeedsEditComponent implements OnInit {
         ...this.feed$.value?.fetch!,
         intervalMinutes: +this.form.controls.fetchIntervalMinutes.value!.trim(),
       },
+      retention,
     };
     await this.feedsRepo.updateFeed(feed);
   }

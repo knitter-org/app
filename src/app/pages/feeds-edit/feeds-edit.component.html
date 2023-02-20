@@ -50,7 +50,7 @@
   </div>
 
 
-  <div class="card">
+  <div class="card mb-3">
     <div class="card-header">
       Entry Retention Strategy
     </div>
@@ -92,14 +92,14 @@
           placeholder="5"
           class="form-control form-control-sm mx-3"
         />
-        <label for="retentionDeleteOlderThanHours">Minutes</label>
+        <label for="retentionDeleteOlderThanHours">Hours</label>
       </div>
     </div>
   </div>
 
   <div class="d-flex justify-content-end">
     <button
-      type="button"
+      type="submit"
       [disabled]="form.pristine || !form.valid"
       (click)="saveFeed()"
       class="btn btn-primary"

@@ -15,8 +15,4 @@ export class EntryListComponent {
   @Input() entries$?: Observable<Entry[]>;
 
   @Output() onRead = new EventEmitter<Entry>();
-
-  onEntryClick(entry: Entry) {
-    this.onRead.emit(entry);
-  }
 }

@@ -8,7 +8,7 @@
 
 <ng-template #listItem let-entry>
   <a
-    (click)="onEntryClick(entry)"
+    (click)="onRead.emit(entry)"
     [href]="entry.url"
     target="_blank"
     class="list-group-item list-group-item-action"

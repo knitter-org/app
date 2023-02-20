@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { FeedData } from '@extractus/feed-extractor';
 import { createStore } from '@ngneat/elf';
-import { selectAllEntities, getEntity, setEntities, withEntities } from '@ngneat/elf-entities';
+import { getEntity, selectAllEntities, selectEntity, setEntities, withEntities } from '@ngneat/elf-entities';
 import { Feed } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
-import { shareReplay } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 
 const store = createStore(
   { name: 'feeds' },
@@ -19,8 +18,8 @@ export class FeedsRepository {
     this.loadFeeds();
   }
 
-  getFeed(id: string): Feed | undefined {
-    return store.query(getEntity(id));
+  getFeed$(id: string): Observable<Feed | undefined> {
+    return store.pipe(selectEntity(id));
   }
 
   async createFeedFromUrl(url: string): Promise<Feed> {

@@ -1,5 +1,7 @@
 <h3>{{ (feed$ | async)?.title }}</h3>
 
+{{ isLoading$ | async }}
+
 <div class="d-flex justify-content-end my-2 gap-2">
   <button (click)="forceFetch()" type="button" class="btn btn-secondary">
     <fa-icon [icon]="fetchIcon"></fa-icon>
