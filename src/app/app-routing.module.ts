@@ -6,11 +6,11 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { ChannelsViewComponent } from './pages/channels-view/channels-view.component';
 import { FeedsEditComponent } from './pages/feeds-edit/feeds-edit.component';
 import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-columns-layout.component';
-import { VerticalNavComponent } from './elements/vertical-nav/vertical-nav.component';
 import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
 import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
 import { MigrationComponent } from './pages/migration/migration.component';
 import { MigratedGuard } from './pages/migration/migrated.guard';
+import { FeedsListComponent } from './pages/feeds-list/feeds-list.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'channels/timeline' },
@@ -21,8 +21,8 @@ const routes: Routes = [
     component: TwoColumnsLayoutComponent,
     canActivateChild: [InitializedGuardService, MigratedGuard],
     children: [
-      { path: '', component: VerticalNavComponent, outlet: 'aside' },
       { path: 'channels/:id', component: ChannelsViewComponent },
+      { path: 'feeds', component: FeedsListComponent },
       { path: 'feeds/add', component: FeedsAddComponent },
       { path: 'feeds/:id/edit', component: FeedsEditComponent },
       { path: 'feeds/:id', component: FeedsViewComponent },

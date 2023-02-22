@@ -1,50 +1,59 @@
-<nav class="nav nav-pills flex-column mt-2 channels">
-  <a
-    routerLink="/channels/timeline"
-    routerLinkActive="active"
-    ariaCurrentWhenActive="page"
-    class="nav-link"
-  >
-    <fa-icon [icon]="faNewspaper"></fa-icon> Timeline
-  </a>
-
-  <hr />
-</nav>
-
-<ng-container *ngIf="feedsVm$ | async as feedVms">
-  <nav *ngIf="feedVms.length > 0" class="nav nav-pills flex-column mt-2 feeds">
+<ul class="menu">
+  <li class="menu-title">
+    <span>Channel</span>
+  </li>
+  <li>
     <a
-      *ngFor="let feedVm of feedVms"
-      [routerLink]="['/feeds', feedVm.id]"
+      routerLink="/channels/timeline"
       routerLinkActive="active"
       ariaCurrentWhenActive="page"
       class="nav-link"
     >
-      <fa-icon [icon]="faRss"></fa-icon> {{ feedVm.title }}
-      <span class="badge rounded-pill text-bg-light">{{
-        feedVm.unreadEntriesCount
-      }}</span>
+      <fa-icon [icon]="faNewspaper"></fa-icon> Timeline
     </a>
+  </li>
 
-    <hr />
-  </nav>
-</ng-container>
+  <ng-container *ngIf="feedsVm$ | async as feedVms">
+    <li class="menu-title mt-2">
+      <span>Feeds</span>
+    </li>
+    <li>
+      <a
+        *ngFor="let feedVm of feedVms"
+        [routerLink]="['/feeds', feedVm.id]"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        class="nav-link"
+      >
+        <fa-icon [icon]="faRss"></fa-icon> {{ feedVm.title }}
+        <span class="badge rounded-pill text-bg-light">{{
+          feedVm.unreadEntriesCount
+        }}</span>
+      </a>
+    </li>
+  </ng-container>
 
-<nav class="nav nav-pills flex-column mt-2 channels">
-  <a
-    routerLink="/feeds/add"
-    routerLinkActive="active"
-    ariaCurrentWhenActive="page"
-    class="nav-link"
-  >
-    <fa-icon [icon]="faPlus"></fa-icon> Add Feed
-  </a>
-  <a
-    routerLink="/settings"
-    routerLinkActive="active"
-    ariaCurrentWhenActive="page"
-    class="nav-link"
-  >
-    <fa-icon [icon]="faGear"></fa-icon> Settings
-  </a>
-</nav>
+  <li class="menu-title mt-2">
+    <span>Feeds</span>
+  </li>
+  <li>
+    <a
+      routerLink="/feeds/add"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+      class="nav-link"
+    >
+      <fa-icon [icon]="faPlus"></fa-icon> Add Feed
+    </a>
+  </li>
+  <li>
+    <a
+      routerLink="/settings"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+      class="nav-link"
+    >
+      <fa-icon [icon]="faGear"></fa-icon> Settings
+    </a>
+  </li>
+</ul>

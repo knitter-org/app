@@ -1,18 +1,16 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowsRotate, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, map, mergeMap, Observable, switchMap } from 'rxjs';
-import { Feed, Entry } from 'app/services/database.models';
-import { FeedService } from 'app/services/feed.service';
-import { FeedViewRepository } from './feed-view.store';
+import { Entry, Feed } from 'app/services/database.models';
+import { map, Observable } from 'rxjs';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
+import { FeedViewRepository } from './feed-view.store';
 
 @UntilDestroy()
 @Component({
   selector: 'app-feeds-view',
   templateUrl: './feeds-view.component.html',
-  styleUrls: ['./feeds-view.component.less'],
   providers: [FeedViewRepository],
 })
 export class FeedsViewComponent implements OnInit {
@@ -44,6 +42,7 @@ export class FeedsViewComponent implements OnInit {
     // await this.feedService.fetchEntries(this.feedId$.value!);
     // this.feedId$.next(this.feedId$.value);
   }
+
   async editFeed() {
     const feed = await firstValueFrom(this.feed$);
     this.router.navigate(['feeds', feed.id, 'edit']);

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FeedReaderService } from 'app/services/feed-reader.service';
 import { ScheduledFeedFetcherService } from 'app/services/scheduled-feed-fetcher.service';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,12 +19,13 @@ import { DeleteDatabaseComponent } from './pages/settings/delete-database/delete
 import { FeedProxySettingsComponent } from './pages/settings/feed-proxy-settings/feed-proxy-settings.component';
 import { ServerSettingsComponent } from './pages/settings/server-settings/server-settings.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { BottomNavComponent } from './elements/bottom-nav/bottom-nav.component';
+import { FeedsListComponent } from './pages/feeds-list/feeds-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     InitializationComponent,
-    VerticalNavComponent,
     SettingsComponent,
     ChannelsViewComponent,
     FeedsEditComponent,
@@ -40,10 +40,12 @@ import { SettingsComponent } from './pages/settings/settings.component';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    NgbModule,
     FontAwesomeModule,
     FeedsAddComponent,
     EntryListComponent,
+    VerticalNavComponent,
+    BottomNavComponent,
+    FeedsListComponent,
   ],
   providers: [FeedReaderService],
   bootstrap: [AppComponent]

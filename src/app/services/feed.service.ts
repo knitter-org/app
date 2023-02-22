@@ -83,6 +83,9 @@ export class FeedService {
 
   async getEntries(feedId: string): Promise<Entry[]> {
     const feedDoc: FeedDoc = await this.databaseService.get(feedId);
+
+    // Only a workaround to save a migration, can be removed soon, added 2023-02-22
+    this.updateFeedDocEntryOrder(feedDoc);
     return feedDoc.entries.map(entryDoc => this.mapToEntry(entryDoc, feedDoc._id));
   }
 
@@ -96,6 +99,7 @@ export class FeedService {
       .map((fetchedEntry) => this.mapToEntryDoc(fetchedEntry));
     if (newEntries.length > 0) {
       feedDoc.entries = [...newEntries, ...feedDoc.entries];
+      this.applyRetentionStrategy(feedDoc);
       this.updateFeedDocEntryOrder(feedDoc);
       console.log(
         `Fetch finished for ${feedDoc._id} (${feedDoc.title}): ${newEntries.length} new entries since ${feedDoc.fetch.lastSuccessfulAt}`
@@ -175,8 +179,14 @@ export class FeedService {
   }
 
   private mapToEntry(entry: EntryDoc, feedId: string): Entry {
+    let id = entry.id;
+    // Only a workaround to save a migration, can be removed soon, added 2023-02-22
+    if (!id) {
+      id = this.generateEntryId(entry.url, new Date(entry.publishedAt));
+    }
     return {
       ...entry,
+      id,
       feedId,
       publishedAt: new Date(entry.publishedAt),
       readAt: entry.readAt ? new Date(entry.readAt) : undefined,
@@ -205,7 +215,13 @@ export class FeedService {
 
   private updateFeedDocEntryOrder(feedDoc: FeedDoc) {
     feedDoc.entries.sort(
-      (a, b) => a.publishedAt == b.publishedAt ? 0 : (a.publishedAt < b.publishedAt ? -1 : 1)
+      (a, b) => a.publishedAt == b.publishedAt ? 0 : (a.publishedAt < b.publishedAt ? 1 : -1)
     );
+  }
+
+  private applyRetentionStrategy(feedDoc: FeedDoc) {
+    // if (feedDoc.retention.strategy === 'delete-older-than') {
+    //   feedDoc.retention.thresholdHours
+    // }
   }
 }

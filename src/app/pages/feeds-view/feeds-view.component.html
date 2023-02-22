@@ -1,7 +1,7 @@
-<h3>{{ (feed$ | async)?.title || 'Loading...' }}</h3>
+<h2 class="text-2xl">{{ (feed$ | async)?.title || 'Loading...' }}</h2>
 
 <ng-container *ngIf="!(isLoading$ | async); else loadingSpinner">
-  <div #buttons class="d-flex justify-content-end my-2 gap-2">
+  <div #buttons class="flex justify-end my-2 gap-2">
     <button (click)="forceFetch()" type="button" class="btn btn-secondary">
       <fa-icon [icon]="fetchIcon"></fa-icon>
     </button>
@@ -15,9 +15,5 @@
 </ng-container>
 
 <ng-template #loadingSpinner>
-  <div class="text-center m-5">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
+  Loading...
 </ng-template>

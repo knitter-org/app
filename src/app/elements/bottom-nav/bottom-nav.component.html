@@ -1,0 +1,26 @@
+<div class="btm-nav">
+  <button
+    [routerLink]="['/channels']"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+  >
+    <fa-icon [icon]="faNewspaper"></fa-icon>
+    Timeline
+  </button>
+  <button
+    [routerLink]="['/feeds']"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+  >
+    <fa-icon [icon]="faRss"></fa-icon>
+    Feeds
+  </button>
+  <button
+    [routerLink]="['/settings']"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+  >
+    <fa-icon [icon]="faGear"></fa-icon>
+    Settings
+  </button>
+</div>

@@ -1,8 +1,9 @@
-<div class="row justify-content-center">
-  <div class="col col-4 col-lg-3 col-xl-2 mt-5">
-    <router-outlet name="aside"></router-outlet>
-  </div>
-  <div class="col col-8 col-lg-6 col-xl-5 mt-4 py-2 px-3 box rounded-1">
+<div class="flex flex-row gap-5 justify-center m-5">
+  <app-vertical-nav class="menu basis-56 hidden md:block"></app-vertical-nav>
+
+  <div class="md:basis-1/2">
     <router-outlet></router-outlet>
   </div>
 </div>
+
+<app-bottom-nav class="visible md:invisible"></app-bottom-nav>
