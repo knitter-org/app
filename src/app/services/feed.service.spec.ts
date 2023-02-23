@@ -1,8 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { produceEntry } from 'test/entry.factory';
-import { produceFeed } from 'test/feed.factory';
-import { Feed } from './database.models';
 import { DatabaseService } from './database.service';
 import { FeedReaderService } from './feed-reader.service';
 
@@ -105,6 +103,51 @@ describe('FeedService', () => {
       expect(
         new Date().getTime() - feed.fetch.lastSuccessfulAt.getTime()
       ).toBeLessThan(1000);
+    });
+
+    it('should delete old entries as configured in retention strategy', async () => {
+      const feedService = spectator.inject(FeedService);
+
+      await feedService.saveFeed({
+        ...(await feedService.getFeed(feedId)),
+        retention: {
+          strategy: 'delete-older-than',
+          thresholdHours: 24,
+        },
+      });
+
+      const feedReaderServiceSpy = spectator.inject(FeedReaderService);
+      const nowTimestampMs = new Date().getTime();
+      const oneHourInMs = 60 * 60 * 1000;
+      feedReaderServiceSpy.fetchFeed.and.returnValue(
+        Promise.resolve({
+          title: 'test-mock-feed',
+          entries: [
+            {
+              title: 'now',
+              text: '',
+              publishedAt: new Date(nowTimestampMs),
+              url: faker.internet.url(),
+            },
+            {
+              title: 'now - 22h',
+              text: '',
+              publishedAt: new Date(nowTimestampMs - 22 * oneHourInMs),
+              url: faker.internet.url(),
+            },
+            {
+              title: 'now - 7d',
+              text: '',
+              publishedAt: new Date(nowTimestampMs - 7 * 24 * oneHourInMs),
+              url: faker.internet.url(),
+            }
+          ],
+        })
+      );
+      await feedService.fetchEntries(feedId);
+
+      const entries = await feedService.getEntries(feedId);
+      expect(entries).toHaveSize(2);
     });
   });
 });

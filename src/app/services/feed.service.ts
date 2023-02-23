@@ -220,8 +220,9 @@ export class FeedService {
   }
 
   private applyRetentionStrategy(feedDoc: FeedDoc) {
-    // if (feedDoc.retention.strategy === 'delete-older-than') {
-    //   feedDoc.retention.thresholdHours
-    // }
+    if (feedDoc.retention.strategy === 'delete-older-than') {
+      const thresholdDate = new Date(new Date().getTime() - feedDoc.retention.thresholdHours * 60 * 60 * 1000).toISOString();
+      feedDoc.entries = feedDoc.entries.filter(entry => entry.publishedAt > thresholdDate);
+    }
   }
 }
