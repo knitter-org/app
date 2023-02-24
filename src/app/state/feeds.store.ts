@@ -1,20 +1,28 @@
 import { Injectable } from '@angular/core';
 import { createStore } from '@ngneat/elf';
-import { selectAllEntities, selectEntity, setEntities, upsertEntities, withEntities } from '@ngneat/elf-entities';
+import {
+  addEntities,
+  selectAllEntities,
+  selectEntity,
+  setEntities,
+  upsertEntities,
+  withEntities,
+} from '@ngneat/elf-entities';
 import { Feed } from 'app/services/database.models';
+import { FeedReaderService } from 'app/services/feed-reader.service';
 import { FeedService } from 'app/services/feed.service';
 import { Observable, shareReplay } from 'rxjs';
 
-const store = createStore(
-  { name: 'feeds' },
-  withEntities<Feed>()
-);
+const store = createStore({ name: 'feeds' }, withEntities<Feed>());
 
 @Injectable({ providedIn: 'root' })
 export class FeedsRepository {
   feeds$ = store.pipe(selectAllEntities(), shareReplay({ refCount: true }));
 
-  constructor(private feedService: FeedService) {
+  constructor(
+    private feedService: FeedService,
+    private feedReaderService: FeedReaderService
+  ) {
     this.loadFeeds();
   }
 
@@ -23,15 +31,22 @@ export class FeedsRepository {
   }
 
   async createFeedFromUrl(url: string): Promise<Feed> {
-    throw new Error('Method not implemented.');
+    const { title, fetchedAt, entries } =
+      await this.feedReaderService.fetchFeed(url);
+
+    const feed = await this.feedService.addFeed(title, url, fetchedAt, entries);
+    store.update(addEntities(feed));
+    return feed;
   }
 
   async updateFeed(feed: Feed) {
-    const savedFeedDoc = await this.feedService.saveFeed(feed);
-    store.update(upsertEntities(savedFeedDoc));
+    const savedFeed = await this.feedService.saveFeed(feed);
+    store.update(upsertEntities(savedFeed));
   }
 
   private loadFeeds() {
-    this.feedService.getFeeds().then(feeds => store.update(setEntities(feeds)));
+    this.feedService
+      .getFeeds()
+      .then((feeds) => store.update(setEntities(feeds)));
   }
 }

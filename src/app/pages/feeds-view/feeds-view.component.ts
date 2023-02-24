@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowsRotate, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Entry, Feed } from 'app/services/database.models';
+import { FeedService } from 'app/services/feed.service';
 import { map, Observable } from 'rxjs';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { FeedViewRepository } from './feed-view.store';
@@ -24,7 +25,8 @@ export class FeedsViewComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private feedViewRepo: FeedViewRepository
+    private feedViewRepo: FeedViewRepository,
+    private feedService: FeedService,
   ) {}
 
   ngOnInit() {
@@ -37,10 +39,9 @@ export class FeedsViewComponent implements OnInit {
   }
 
   async forceFetch() {
-    alert('todo');
-    // const feed = await firstValueFrom(this.feed$);
-    // await this.feedService.fetchEntries(this.feedId$.value!);
-    // this.feedId$.next(this.feedId$.value);
+    const feed = await firstValueFrom(this.feed$);
+    await this.feedService.fetchEntries(feed.id);
+    await this.feedViewRepo.loadFeed(feed.id);
   }
 
   async editFeed() {

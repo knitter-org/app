@@ -31,8 +31,8 @@ export class FeedsAddComponent {
 
     try {
       this.fetchActive = true;
-      const feedDoc = await this.feedsRepo.createFeedFromUrl(url);
-      await this.router.navigate(['feeds', feedDoc?.id]);
+      const feed = await this.feedsRepo.createFeedFromUrl(url);
+      await this.router.navigate(['feeds', feed?.id]);
     } catch {
       this.fetchActive = false;
     }
