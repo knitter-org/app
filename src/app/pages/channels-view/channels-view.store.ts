@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, filterNil, select, withProps } from '@ngneat/elf';
-import { selectAllEntities, withEntities } from '@ngneat/elf-entities';
-import { removeStore } from '@ngneat/elf/src/lib/registry';
+import { selectAllEntities, setEntities, upsertEntities, withEntities } from '@ngneat/elf-entities';
 import { ChannelService } from 'app/services/channel.service';
 import { ChannelDoc, Entry } from 'app/services/database.models';
 import { FeedService } from 'app/services/feed.service';
@@ -25,53 +24,20 @@ export class ChannelViewStore {
 
   entries$ = store.pipe(selectAllEntities());
 
-  constructor(private channelService: ChannelService, private feedService: FeedService) {
-    store.reset();
+  constructor(private channelService: ChannelService, private feedService: FeedService) {}
+
+  async loadChannel(channelId: string): Promise<void> {
+    store.update(state => ({ ...state, isLoading: true }));
+
+    const channel = await this.channelService.getChannel(channelId);
+    store.update(state => ({...state, channel }));
+
+    const entries = await this.channelService.unreadEntiresOrderedByDate(channelId);
+    store.update(setEntities(entries), state => ({ ...state, isLoading: false }));
   }
 
-  updateForChannelId(channelId: any): void {
-    // store.update(state => ({ ...state, isLoading: true }));
-    // this.channelService.getChannel(channelId);
-    // store.update(state => ({ ...state, isLoading: false }));
+  async markEntryAsRead(entry: Entry) {
+    const updatedEntry = await this.feedService.markEntryAsRead(entry.feedId, entry.id);
+    store.update(upsertEntities(updatedEntry));
   }
-
-
-//   readonly updateForChannelId = this.effect((channelId$: Observable<string>) =>
-//     channelId$.pipe(
-//       tap((_) => this.patchState({ isLoading: true })),
-//       switchMap((channelId) =>
-//         forkJoin({
-//           channel: this.channelService.getChannel(
-//             ChannelService.ID_PREFIX + channelId
-//           ),
-//           entries: this.channelService.unreadEntiresOrderedByDate(channelId),
-//         })
-//       ),
-//       tapResponse(
-//         ({ channel, entries }) =>
-//           this.patchState({
-//             channel,
-//             entries: Immutable.List(entries),
-//             isLoading: false,
-//           }),
-//         (error) =>
-//           console.log('ChannelViewStore updateForChannelId error:', error)
-//       )
-//     )
-//   );
-
-//   readonly onEntryRead = this.effect((entry$: Observable<Entry>) =>
-//     entry$.pipe(
-//       concatMap((entry) => this.feedService.updateEntry(entry.id, { readAt: new Date() })),
-//       concatMap(entry => of(entry) ?? throwError(() => 'feedService.updateEntry returned unexpected '+entry)),
-//       tapResponse(
-//         (entry) =>
-//           this.patchState(state => ({
-//             entries: state.entries?.map(it => it.id === entry!.id ? entry! : it),
-//           })),
-//         (error) =>
-//           console.log('ChannelViewStore updateForChannelId error:', error)
-//       )
-//     )
-//   );
 }

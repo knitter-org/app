@@ -2,10 +2,18 @@
   <a
     *ngFor="let feedVm of feedsVm$ | async"
     [routerLink]="['/feeds', feedVm.id]"
-    routerLinkActive="active"
-    ariaCurrentWhenActive="page"
     class="btn p-2"
   >
     <div class="text-lg">{{ feedVm.title }}</div>
+  </a>
+
+  <hr class="my-4"/>
+
+  <a
+    routerLink="/feeds/add"
+    class="btn p-2"
+  >
+    <fa-icon [icon]="faPlus" class="pr-2"></fa-icon>
+    Add Feed
   </a>
 </div>
