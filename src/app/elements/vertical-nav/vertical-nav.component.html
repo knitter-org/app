@@ -13,7 +13,7 @@
     </a>
   </li>
 
-  <ng-container *ngIf="feedsVm$ | async as feedVms">
+  <ng-container *ngIf="feedVms$ | async as feedVms">
     <li class="menu-title mt-2">
       <span>Feeds</span>
     </li>
@@ -26,7 +26,7 @@
         class="nav-link"
       >
         <fa-icon [icon]="faRss"></fa-icon> {{ feedVm.title }}
-        <span class="badge rounded-pill text-bg-light">{{
+        <span class="badge">{{
           feedVm.unreadEntriesCount
         }}</span>
       </a>

@@ -3,16 +3,19 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
-  faGear, faNewspaper, faPlus, faRss
+  faGear,
+  faNewspaper,
+  faPlus,
+  faRss,
 } from '@fortawesome/free-solid-svg-icons';
-import { FeedsRepository } from 'app/state/feeds.store';
-import { map } from 'rxjs';
+import { VerticalNavRepository } from './vertical-nav.store';
 
 @Component({
   selector: 'app-vertical-nav',
   templateUrl: './vertical-nav.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, FontAwesomeModule]
+  imports: [CommonModule, RouterModule, FontAwesomeModule],
+  providers: [VerticalNavRepository]
 })
 export class VerticalNavComponent {
   faGear = faGear;
@@ -20,11 +23,7 @@ export class VerticalNavComponent {
   faPlus = faPlus;
   faNewspaper = faNewspaper;
 
-  readonly feedsVm$ = this.feedsRepo.feeds$.pipe(map(feeds => feeds.map(feed => ({
-    id: feed.id, title: feed.title, unreadEntriesCount: 0
-  }))));
+  readonly feedVms$ = this.verticalNavRepo.feedVms$();
 
-  constructor(
-    private feedsRepo: FeedsRepository,
-  ) {}
+  constructor(private verticalNavRepo: VerticalNavRepository) {}
 }

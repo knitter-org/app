@@ -1,18 +1,21 @@
 <div class="flex flex-col gap-2">
   <a
-    *ngFor="let feedVm of feedsVm$ | async"
+    *ngFor="let feedVm of feedVms$ | async"
     [routerLink]="['/feeds', feedVm.id]"
     class="btn p-2"
   >
-    <div class="text-lg">{{ feedVm.title }}</div>
+    <div class="text-lg">
+      {{ feedVm.title}}
+
+      <span class="badge">{{
+        feedVm.unreadEntriesCount
+      }}</span>
+    </div>
   </a>
 
-  <hr class="my-4"/>
+  <hr class="my-4" />
 
-  <a
-    routerLink="/feeds/add"
-    class="btn p-2"
-  >
+  <a routerLink="/feeds/add" class="btn p-2">
     <fa-icon [icon]="faPlus" class="pr-2"></fa-icon>
     Add Feed
   </a>
