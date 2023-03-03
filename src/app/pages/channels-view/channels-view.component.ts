@@ -13,8 +13,6 @@ import { ChannelViewStore } from './channels-view.store';
   providers: [ChannelViewStore],
 })
 export class ChannelsViewComponent {
-  readonly channel$ = this.channelViewStore.channel$;
-
   readonly entries$ = this.channelViewStore.entries$;
 
   readonly isLoading$ = this.channelViewStore.isLoading$;

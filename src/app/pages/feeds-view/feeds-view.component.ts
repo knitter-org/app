@@ -13,6 +13,7 @@ import { FeedViewRepository } from './feed-view.store';
   selector: 'app-feeds-view',
   templateUrl: './feeds-view.component.html',
   providers: [FeedViewRepository],
+  host: {class: 'flex flex-col h-full' }
 })
 export class FeedsViewComponent implements OnInit {
   fetchIcon = faArrowsRotate;

@@ -20,8 +20,6 @@ const store = createStore(
 export class ChannelViewStore {
   isLoading$ = store.pipe(select(state => state.isLoading));
 
-  channel$ = store.pipe(select(state => state.channel), filterNil());
-
   entries$ = store.pipe(selectAllEntities());
 
   constructor(private channelService: ChannelService, private feedService: FeedService) {}

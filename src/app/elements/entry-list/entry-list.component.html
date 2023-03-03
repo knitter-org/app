@@ -1,18 +1,18 @@
-<ul class="list-group">
-  <ng-container
-    *ngFor="let entry of entries$ | async"
-    [ngTemplateOutlet]="listItem"
-    [ngTemplateOutletContext]="{ $implicit: entry }"
-  ></ng-container>
-</ul>
+<cdk-virtual-scroll-viewport itemSize="140" class="block h-full">
+  <div *cdkVirtualFor="let entry of entries$ | async" class="block w-full h-[140px] overflow-hidden">
+    <ng-container
+      *ngTemplateOutlet="listItem; context: { $implicit: entry }"
+    ></ng-container
+  ></div>
+</cdk-virtual-scroll-viewport>
 
 <ng-template #listItem let-entry>
   <a
     (click)="onRead.emit(entry)"
     [href]="entry.url"
     target="_blank"
-    class="list-group-item list-group-item-action"
     [class.text-secondary]="!!entry.readAt"
+    class=""
   >
     <div class="d-flex w-100 justify-content-between">
       <small>{{ entry.publishedAt | date }}</small>
