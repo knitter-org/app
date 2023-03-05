@@ -60,7 +60,7 @@ export class FeedViewRepository implements OnDestroy {
   }
 
   async markEntryAsRead(entry: Entry) {
-    const updatedEntry = await this.feedService.markEntryAsRead(entry.feedId, entry.id);
+    const updatedEntry = await this.feedService.markEntryAsRead(entry.feedId, entry.id, !entry.readAt);
     this.store.update(upsertEntities(updatedEntry));
   }
 }

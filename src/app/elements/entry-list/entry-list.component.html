@@ -1,29 +1,37 @@
 <cdk-virtual-scroll-viewport itemSize="140" class="block h-full">
-  <div *cdkVirtualFor="let entry of entries$ | async" class="block w-full h-[140px] overflow-hidden">
+  <div
+    *cdkVirtualFor="let entry of entries$ | async"
+    class="block w-full h-[140px] overflow-hidden"
+  >
     <ng-container
       *ngTemplateOutlet="listItem; context: { $implicit: entry }"
-    ></ng-container
-  ></div>
+    ></ng-container>
+  </div>
 </cdk-virtual-scroll-viewport>
 
 <ng-template #listItem let-entry>
-  <a
-    (click)="onRead.emit(entry)"
-    [href]="entry.url"
-    target="_blank"
-    [class.text-secondary]="!!entry.readAt"
-    class=""
-  >
-    <div class="d-flex w-100 justify-content-between">
-      <small>{{ entry.publishedAt | date }}</small>
-      <span
-        class="badge"
-        [class.text-bg-dark]="!entry.readAt"
-        [class.text-bg-secondary]="!!entry.readAt"
-        >{{ entry | feedBadge | async }}</span
-      >
-    </div>
-    <h5 class="my-1">{{ entry.title }}</h5>
-    <small>{{ entry.text }}</small>
-  </a>
+  <div class="flex flex-row max-w-full">
+    <a
+      (click)="onEntryClick(entry)"
+      [href]="entry.url"
+      target="_blank"
+      [class.text-secondary]="!!entry.readAt"
+      class="flex-1 truncate"
+    >
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-400">{{ entry.publishedAt | dateAgo }}</span>
+        <span class="badge badge-sm">{{ entry | feedBadge | async }}</span>
+      </div>
+      <div class="text-lg text-gray-200 truncate">{{ entry.title }}</div>
+      <small class="whitespace-normal line-clamp-3 text-gray-400">{{ entry.text }}</small>
+    </a>
+    <span class="flex-0 basis-12 flex justify-around">
+      <input
+        (click)="onReadToggle(entry)"
+        [checked]="!!entry.readAt"
+        type="checkbox"
+        class="checkbox checkbox-sm checkbox-info"
+      />
+    </span>
+  </div>
 </ng-template>

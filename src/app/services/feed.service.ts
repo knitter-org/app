@@ -116,13 +116,19 @@ export class FeedService {
     return await this.getFeed(response.id);
   }
 
-  async markEntryAsRead(feedId: string, entryId: string): Promise<Entry> {
+  async markEntryAsRead(feedId: string, entryId: string, isRead: boolean = true): Promise<Entry> {
     const feedDoc: FeedDoc = await this.databaseService.db.get(feedId);
     feedDoc.entries = feedDoc.entries.map(entryDoc => {
       if (entryDoc.id === entryId) {
+        let readAt: string | undefined;
+        if (isRead) {
+          readAt = entryDoc.readAt ?? new Date().toISOString();
+        } else {
+          readAt = undefined;
+        }
         return {
           ...entryDoc,
-          readAt: entryDoc.readAt ?? new Date().toISOString(),
+          readAt,
         };
       }
       return entryDoc;

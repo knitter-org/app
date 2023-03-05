@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createStore, filterNil, select, withProps } from '@ngneat/elf';
+import { createStore, select, withProps } from '@ngneat/elf';
 import { selectAllEntities, setEntities, upsertEntities, withEntities } from '@ngneat/elf-entities';
 import { ChannelService } from 'app/services/channel.service';
 import { ChannelDoc, Entry } from 'app/services/database.models';
@@ -35,7 +35,7 @@ export class ChannelViewStore {
   }
 
   async markEntryAsRead(entry: Entry) {
-    const updatedEntry = await this.feedService.markEntryAsRead(entry.feedId, entry.id);
+    const updatedEntry = await this.feedService.markEntryAsRead(entry.feedId, entry.id, !entry.readAt);
     store.update(upsertEntities(updatedEntry));
   }
 }
