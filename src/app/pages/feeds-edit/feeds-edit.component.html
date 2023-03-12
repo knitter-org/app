@@ -1,59 +1,62 @@
 <h3>Edit Feed</h3>
 
 <form [formGroup]="form">
-  <div class="form-floating mb-3">
+  <div class="form-control w-full">
+    <label for="title" class="label">
+      <span class="label-text">Title</span>
+    </label>
     <input
       formControlName="title"
-      [class.is-invalid]="
+      [class.input-error]="
         form.get('title')?.errors &&
         (form.get('title')?.touched || form.get('title')?.dirty)
       "
       id="title"
       type="text"
       placeholder="World News"
-      class="form-control"
+      class="input input-bordered w-full"
     />
-    <label for="title">Title</label>
     <div
       *ngIf="form.get('title')?.errors?.['required'] && (form.get('title')?.touched || form.get('title')?.dirty)"
-      class="invalid-feedback"
+      class="alert alert-warning shadow-lg"
     >
-      Tilte is required and cannot be blank.
+      Title is required and cannot be blank.
     </div>
   </div>
 
-  <div class="form-floating mb-3">
+  <div class="form-control w-full">
+    <label for="badge" class="label">
+      <span class="label-text">Badge</span>
+    </label>
     <input
       formControlName="badge"
-      [class.is-invalid]="form.get('badge')?.errors"
+      [class.input-error]="form.get('badge')?.errors"
       id="badge"
       type="text"
       placeholder="world"
-      class="form-control"
+      class="input input-bordered w-full"
     />
-    <label for="badge">Badge</label>
   </div>
 
-  <div class="input-group mb-3">
-    <div class="form-floating">
+  <div class="form-control w-full">
+    <label for="fetchIntervalMinutes" class="label">
+      <span class="label-text">Fetch Interval</span>
+    </label>
+    <label class="input-group">
       <input
         formControlName="fetchIntervalMinutes"
-        [class.is-invalid]="form.get('fetchIntervalMinutes')?.errors"
+        [class.input-error]="form.get('fetchIntervalMinutes')?.errors"
         id="fetchIntervalMinutes"
         type="text"
         placeholder="5"
-        class="form-control"
+        class="input input-bordered w-full"
       />
-      <label for="fetchIntervalMinutes">Fetch Interval</label>
-    </div>
-    <span class="input-group-text">Minutes</span>
+      <span>Minutes</span>
+    </label>
   </div>
 
-
   <div class="card mb-3">
-    <div class="card-header">
-      Entry Retention Strategy
-    </div>
+    <div class="card-header">Entry Retention Strategy</div>
     <div class="card-body">
       <div class="input-group mb-3">
         <div class="form-check">
@@ -84,20 +87,29 @@
           </label>
         </div>
 
-        <input
-          formControlName="retentionDeleteOlderThanHours"
-          [class.is-invalid]="form.get('retentionDeleteOlderThanHours')?.errors"
-          id="retentionDeleteOlderThanHours"
-          type="number"
-          placeholder="5"
-          class="form-control form-control-sm mx-3"
-        />
-        <label for="retentionDeleteOlderThanHours">Hours</label>
+        <div class="form-control pl-4">
+          <label class="input-group input-group-sm">
+            <input
+              formControlName="retentionDeleteOlderThanHours"
+              [class.input-error]="
+                form.get('retentionDeleteOlderThanHours')?.errors
+              "
+              id="retentionDeleteOlderThanHours"
+              type="number"
+              placeholder="5"
+              class="input input-sm input-bordered"
+            />
+            <span>Hours</span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="d-flex justify-content-end">
+  <div class="flex justify-between">
+    <button type="button" (click)="deleteFeed()" class="btn btn-error">
+      Delete
+    </button>
     <button
       type="submit"
       [disabled]="form.pristine || !form.valid"

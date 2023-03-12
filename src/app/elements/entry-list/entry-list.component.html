@@ -1,4 +1,4 @@
-<cdk-virtual-scroll-viewport itemSize="140" class="block h-full">
+<cdk-virtual-scroll-viewport itemSize="140" (scrolledIndexChange)="onScrolledIndexChange($event)" class="block h-full">
   <div
     *cdkVirtualFor="let entry of entries$ | async"
     class="block w-full h-[140px] overflow-hidden"
@@ -12,18 +12,18 @@
 <ng-template #listItem let-entry>
   <div class="flex flex-row max-w-full">
     <a
-      (click)="onEntryClick(entry)"
+      (click)="onEntryRead(entry)"
       [href]="entry.url"
       target="_blank"
       [class.text-secondary]="!!entry.readAt"
-      class="flex-1 truncate"
+      class="flex-1"
     >
       <div class="flex justify-between">
         <span class="text-sm text-gray-400">{{ entry.publishedAt | dateAgo }}</span>
         <span class="badge badge-sm">{{ entry | feedBadge | async }}</span>
       </div>
-      <div class="text-lg text-gray-200 truncate">{{ entry.title }}</div>
-      <small class="whitespace-normal line-clamp-3 text-gray-400">{{ entry.text }}</small>
+      <div class="text-lg line-clamp-2 text-gray-200">{{ entry.title }}</div>
+      <small class="line-clamp-3 text-gray-400">{{ entry.text }}</small>
     </a>
     <span class="flex-0 basis-12 flex justify-around">
       <input

@@ -9,7 +9,6 @@ import { AppComponent } from './app.component';
 import { EntryListComponent } from './elements/entry-list/entry-list.component';
 import { VerticalNavComponent } from './elements/vertical-nav/vertical-nav.component';
 import { TwoColumnsLayoutComponent } from './layouts/two-columns-layout/two-columns-layout.component';
-import { ChannelsViewComponent } from './pages/channels-view/channels-view.component';
 import { FeedsAddComponent } from './pages/feeds-add/feeds-add.component';
 import { FeedsEditComponent } from './pages/feeds-edit/feeds-edit.component';
 import { FeedsViewComponent } from './pages/feeds-view/feeds-view.component';
@@ -27,7 +26,6 @@ import { FeedsListComponent } from './pages/feeds-list/feeds-list.component';
     AppComponent,
     InitializationComponent,
     SettingsComponent,
-    ChannelsViewComponent,
     FeedsEditComponent,
     TwoColumnsLayoutComponent,
     FeedsViewComponent,

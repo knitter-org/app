@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { createStore } from '@ngneat/elf';
 import {
   addEntities,
+  deleteEntities,
   selectAllEntities,
   selectEntity,
   setEntities,
@@ -42,6 +43,11 @@ export class FeedsRepository {
   async updateFeed(feed: Feed) {
     const savedFeed = await this.feedService.saveFeed(feed);
     store.update(upsertEntities(savedFeed));
+  }
+
+  async deleteFeed(feed: Feed) {
+    const savedFeed = await this.feedService.deleteFeed(feed);
+    store.update(deleteEntities(feed.id));
   }
 
   private loadFeeds() {

@@ -15,7 +15,11 @@ import { FeedsListComponent } from './pages/feeds-list/feeds-list.component';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'channels/timeline' },
   { path: 'initialize', component: InitializationComponent },
-  { path: 'migrate', component: MigrationComponent, canActivate: [InitializedGuardService] },
+  {
+    path: 'migrate',
+    component: MigrationComponent,
+    canActivate: [InitializedGuardService],
+  },
   {
     path: '',
     component: TwoColumnsLayoutComponent,
@@ -27,7 +31,7 @@ const routes: Routes = [
       { path: 'feeds/:id/edit', component: FeedsEditComponent },
       { path: 'feeds/:id', component: FeedsViewComponent },
       { path: 'settings', component: SettingsComponent },
-    ]
+    ],
   },
 
   { path: 'channels', pathMatch: 'full', redirectTo: 'channels/timeline' },
@@ -35,7 +39,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

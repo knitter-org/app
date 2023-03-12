@@ -18,7 +18,7 @@ export class EntryListComponent {
 
   @Output() onRead = new EventEmitter<Entry>();
 
-  onEntryClick(entry: Entry) {
+  onEntryRead(entry: Entry) {
     if (!entry.readAt) {
       this.onRead.emit(entry);
     }
@@ -26,5 +26,9 @@ export class EntryListComponent {
 
   onReadToggle(entry: Entry) {
     this.onRead.emit(entry);
+  }
+
+  onScrolledIndexChange(idx: number) {
+
   }
 }

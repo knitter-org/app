@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { Doc, SyncSettingsDoc } from './database.models';
 
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 
 export type SyncStatus = 'disabled' | 'disconnected' | 'connected' | 'error';
 

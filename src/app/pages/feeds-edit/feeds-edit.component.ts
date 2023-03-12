@@ -9,13 +9,12 @@ import {
   RetentionKeepForever,
 } from 'app/services/database.models';
 import { FeedsRepository } from 'app/state/feeds.store';
-import { BehaviorSubject, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
 @UntilDestroy()
 @Component({
   selector: 'app-feeds-edit',
   templateUrl: './feeds-edit.component.html',
-  styleUrls: ['./feeds-edit.component.less'],
 })
 export class FeedsEditComponent implements OnInit {
   readonly feed$ = new BehaviorSubject<Feed | undefined>(undefined);
@@ -54,18 +53,18 @@ export class FeedsEditComponent implements OnInit {
     });
 
     this.feed$.pipe(filterNil(), untilDestroyed(this)).subscribe((feed) => {
-        const retentionDeleteOlderThanHours =
-          feed.retention.strategy == 'delete-older-than'
-            ? feed.retention.thresholdHours
-            : 24;
+      const retentionDeleteOlderThanHours =
+        feed.retention.strategy == 'delete-older-than'
+          ? feed.retention.thresholdHours
+          : 24;
 
-        this.form.setValue({
-          title: feed.title,
-          badge: feed.badge || '',
-          fetchIntervalMinutes: '' + feed.fetch.intervalMinutes,
-          retentionStrategy: feed.retention.strategy,
-          retentionDeleteOlderThanHours: '' + retentionDeleteOlderThanHours,
-        });
+      this.form.setValue({
+        title: feed.title,
+        badge: feed.badge || '',
+        fetchIntervalMinutes: '' + feed.fetch.intervalMinutes,
+        retentionStrategy: feed.retention.strategy,
+        retentionDeleteOlderThanHours: '' + retentionDeleteOlderThanHours,
+      });
     });
 
     this.route.params
@@ -83,7 +82,8 @@ export class FeedsEditComponent implements OnInit {
     } else {
       retention = {
         strategy: 'delete-older-than',
-        thresholdHours: +this.form.controls.retentionDeleteOlderThanHours.value!,
+        thresholdHours:
+          +this.form.controls.retentionDeleteOlderThanHours.value!,
       };
     }
     const feed = {
@@ -98,5 +98,14 @@ export class FeedsEditComponent implements OnInit {
     };
     await this.feedsRepo.updateFeed(feed);
     this.router.navigate(['feeds', feed.id]);
+  }
+
+  async deleteFeed() {
+    if (
+      confirm('The feed and all its entries will be deleted. Are you sure?')
+    ) {
+      await this.feedsRepo.deleteFeed(this.feed$.value!);
+      await this.router.navigate(['feeds']);
+    }
   }
 }

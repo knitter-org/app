@@ -81,6 +81,11 @@ export class FeedService {
     return await this.getFeed(response.id);
   }
 
+  async deleteFeed(feed: Feed) {
+    const feedDoc: FeedDoc = await this.databaseService.get(feed.id);
+    await this.databaseService.db.remove(feedDoc._id, feedDoc._rev!);
+  }
+
   async getEntries(feedId: string): Promise<Entry[]> {
     const feedDoc: FeedDoc = await this.databaseService.get(feedId);
 
